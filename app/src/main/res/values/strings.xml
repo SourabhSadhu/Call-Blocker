@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Call Blocker</string>
+    <string name="modify">Modify Contacts</string>
+    <string name="log">View Log</string>
+    <string name="id">ID</string>
+    <string name="number">Number</string>
+    <string name="status">Status</string>
+    <string name="d"></string>
+    <string name="e"></string>
+    <string name="f"></string>
+    <string name="spinner_prompt">Action</string>
+    <string-array name="spinner_array">
+        <item>Action</item>
+        <item>Block</item>
+        <item>Silent</item>
+        <item>Answer</item>
+    </string-array>
+
+</resources>
