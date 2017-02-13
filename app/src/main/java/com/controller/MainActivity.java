@@ -36,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
 
     private Context context;
     private ListView listView;
-    private Spinner spinner;
-    private TextView textView;
+//    private Spinner spinner;
+//    private TextView textView;
     private ImageButton  delete, log; //add,
-    private ImageButton add;
-    private String spinnerData;
+//    private ImageButton add;
+//    private String spinnerData;
     private List<Pojo> pojoList;
     private CustomAdapter listAdapter;
     private int id = 1;
@@ -68,11 +68,11 @@ public class MainActivity extends AppCompatActivity {
         callBarring = new CallBarring();
 //        callBarring.UpdateRecord(context);
         listView = (ListView) findViewById(R.id.list_view);
-        textView = (TextView) findViewById(R.id.new_contacts);
-        add = (ImageButton) findViewById(R.id.add);
+//        textView = (TextView) findViewById(R.id.new_contacts);
+//        add = (ImageButton) findViewById(R.id.add);
         delete = (ImageButton) findViewById(R.id.delete);
         log = (ImageButton) findViewById(R.id.log);
-        spinner = (Spinner) findViewById(R.id.spinner);
+//        spinner = (Spinner) findViewById(R.id.spinner);
 //        listAdapter = new CustomAdapter(this, R.layout.spinner_list_items, new ArrayList<Pojo>());
         listAdapter = new CustomAdapter(this, R.layout.spinner_list_items, sharedPreff.Retreive("MyObject"));
         listView.setAdapter(listAdapter);
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         mPrefs = getSharedPreferences("MyObject", Context.MODE_PRIVATE);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 item = adapterView.getItemAtPosition(i).toString();
@@ -90,15 +90,15 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
                 Log.d("Spinner","Nothing Selected");
             }
-        });
+        });*/
 
-        add.setOnClickListener(new View.OnClickListener() {
+        /*add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                /*
+                *//*
                 Making action hardcoded as block due to unable to silence
-                 */
+                 *//*
 //                item = "Slient";
 //                item = "Block";
 
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(view.getContext(), "Select an Action", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override

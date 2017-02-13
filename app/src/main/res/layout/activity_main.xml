@@ -97,14 +97,14 @@
             android:gravity="center"
             >
             <ImageButton
-                android:id="@+id/delete3"
+                android:id="@+id/add_contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_add_user_color"
                 android:background="@color/white"
                 />
             <TextView
-                android:id="@+id/delete_text3"
+                android:id="@+id/add_contact_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -120,14 +120,14 @@
             android:gravity="center"
             >
             <ImageButton
-                android:id="@+id/delete4"
+                android:id="@+id/add_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_add_user_group"
                 android:background="@color/white"
                 />
             <TextView
-                android:id="@+id/delete_text4"
+                android:id="@+id/add_group_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
