@@ -52,9 +52,14 @@ public class CustomAdapter extends ArrayAdapter {
 
         pojo = pojolist.get(position);
 
-        id.setText(Integer.toString(pojo.getId()));
+        id.setText(Integer.toString(pojo.getId() + 1));
         number.setText(pojo.getNumber());
-        status.setText(pojo.getAction());
+        if(pojo.getDateTime() != null && pojo.getDateTime().length()>0) {
+            status.setText(pojo.getDateTime());
+        }
+        else {
+            status.setText(pojo.getAction());
+        }
         return v;
     }
 
