@@ -9,13 +9,15 @@ public class Pojo implements java.io.Serializable {
     String number;
     String action;
     int id;
+    String dateTime;
     public Pojo(){
 
     }
-    public Pojo(String number, String action, int id) {
+    public Pojo(String number, String action, int id, String dateTime) {
         this.number = number;
         this.action = action;
         this.id = id;
+        this.dateTime = dateTime;
     }
 
     public String getNumber() {
@@ -36,5 +38,10 @@ public class Pojo implements java.io.Serializable {
     public void setId(int id) {
         this.id = id;
     }
-
+    public String getDateTime() {
+        return dateTime;
+    }
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
 }

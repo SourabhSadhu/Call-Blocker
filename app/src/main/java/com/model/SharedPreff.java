@@ -24,51 +24,53 @@ public class SharedPreff extends ContextWrapper {
 
     Context thisContext;
     SharedPreferences mPrefs;
+    private Gson gson;
+    private String name;
 
-    public SharedPreff(Context ctx) {
+    public SharedPreff(Context ctx, String name) {
         super(ctx);
         this.thisContext = ctx;
-        mPrefs = getSharedPreferences("MyObject", thisContext.MODE_PRIVATE);
+        gson = new Gson();
+        this.name = name;
+        mPrefs = getSharedPreferences(name, thisContext.MODE_PRIVATE);
         //getApplicationContext().
     }
 
     public void SaveSerialize(List<Pojo> MyObject) {
-        Log.d("Shared Preference", "preference" + mPrefs.getClass());
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        Gson gson = new Gson();
         String json = gson.toJson(MyObject);
         Log.d("Shared Preference", "Saving Data" + json);
-        prefsEditor.putString("MyObject", json);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        prefsEditor.putString(name, json);
         prefsEditor.commit();
     }
 
-    public List<Pojo> Retreive() {
-        Gson gson = new Gson();
-        String json = mPrefs.getString("MyObject", "");
+    public List<Pojo> Retreive(String name) {
+        String json = mPrefs.getString(name, "");
         Log.d("Shared Preference", "Retreived Data" + json);
         Type listType = new TypeToken<ArrayList<Pojo>>() {
         }.getType();
         List<Pojo> obj = (List<Pojo>) gson.fromJson(json, listType);
-        int id = 1;
+
         if(obj!=null) {
             for (int i = 0; i < obj.size(); i++) {
-                obj.get(i).setId(id);
-                id++;
+                obj.get(i).setId(i);
             }
         }
         return obj;
     }
 
-    public void UpdateList(Pojo p) {
-        List<Pojo> updateList = Retreive();
+    public void UpdateList(Pojo p,String name) {
+        List<Pojo> updateList = Retreive(name);
         if (updateList != null){
-            updateList.add(p);
-            SaveSerialize(updateList);
+        }else{
+            updateList = new ArrayList<Pojo>();
         }
+        updateList.add(p);
+        SaveSerialize(updateList);
     }
 
-    public void DeleteNumber(int position) {
-        List<Pojo> list = Retreive();
+    public void DeleteNumber(int position, String name) {
+        List<Pojo> list = Retreive(name);
         list.remove(position);
         SaveSerialize(list);
         PrintList(list);
@@ -79,6 +81,12 @@ public class SharedPreff extends ContextWrapper {
         for (int i = 0; i < list.size(); i++) {
             Log.d("For Loop Data", "Mobile Number " + list.get(i).getNumber()+":Action "+list.get(i).getAction());
         }
-        Log.d("Shared Preference","List Iterator Data");
+    }
+
+    public void ClearAll(String name){
+//        prefsEditor.putString(name, null);
+//        prefsEditor.commit();
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        prefsEditor.remove(name).commit();
     }
 }
