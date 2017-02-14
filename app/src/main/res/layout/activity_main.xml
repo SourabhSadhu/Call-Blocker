@@ -70,14 +70,14 @@
             android:gravity="center"
             >
             <ImageButton
-                android:id="@+id/delete"
+                android:id="@+id/stop_service"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_stop_blocking"
                 android:background="@color/white"
                 />
             <TextView
-                android:id="@+id/delete_text"
+                android:id="@+id/stop_service_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -143,13 +143,13 @@
             android:gravity="center"
             >
             <ImageButton
-                android:id="@+id/log"
+                android:id="@+id/view_log"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_view_log"
                 android:background="@color/white" />
             <TextView
-                android:id="@+id/log_text"
+                android:id="@+id/view_log_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
