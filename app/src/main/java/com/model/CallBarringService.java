@@ -35,7 +35,7 @@ public class CallBarringService extends IntentService {
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override
