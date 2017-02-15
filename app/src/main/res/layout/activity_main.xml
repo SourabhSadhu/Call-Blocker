@@ -70,19 +70,18 @@
             android:gravity="center"
             >
             <ImageButton
-                android:id="@+id/delete"
+                android:id="@+id/stop_service"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_stop_blocking"
                 android:background="@color/white"
                 />
             <TextView
-                android:id="@+id/delete_text"
+                android:id="@+id/stop_service_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-
-                android:text="Stop Service"
+                android:text="@string/stop_service_text"
                 />
         </LinearLayout>
 
@@ -108,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Add Contact"
+                android:text="@string/add_contact_text"
                 />
         </LinearLayout>
 
@@ -131,7 +130,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Add Group"
+                android:text="@string/add_group_text"
                 />
         </LinearLayout>
 
@@ -143,17 +142,17 @@
             android:gravity="center"
             >
             <ImageButton
-                android:id="@+id/log"
+                android:id="@+id/view_log"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_view_log"
                 android:background="@color/white" />
             <TextView
-                android:id="@+id/log_text"
+                android:id="@+id/view_log_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="View Log"
+                android:text="@string/view_log_text"
                 />
         </LinearLayout>
 
