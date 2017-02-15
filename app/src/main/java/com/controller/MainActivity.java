@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,26 +24,23 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.model.Pojo;
 import com.model.*;
-import com.model.SharedPreff;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.provider.ContactsContract;
+import android.database.Cursor;
+
 public class MainActivity extends AppCompatActivity {
 
     private Intent serviceIntent;
-    private CallBarring callBarring;
+//    private CallBarring callBarring;
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
     private boolean isGranted = false;
 
@@ -57,23 +55,30 @@ public class MainActivity extends AppCompatActivity {
     private Pojo pojo;
     private List<Pojo> pojoArrayList;
 
+    private ImageButton selectContact;
+    private static final int RESULT_PICK_CONTACT = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         context = MainActivity.this;
+
         executeUserPermissionTree();
-        startService(new Intent(this, CallBarringService.class));
-        sharedPreff = new SharedPreff(context,"MyObject");
-        mPrefs = getSharedPreferences("MyObject", Context.MODE_PRIVATE);
-        pojoArrayList = new ArrayList<Pojo>();
-        pojo = new Pojo();
 
-        initView();
-        initListView();
-        setListner();
+        if(isGranted) {
+            startService(new Intent(this, CallBarringService.class));
+            sharedPreff = new SharedPreff(context, "MyObject");
+            mPrefs = getSharedPreferences("MyObject", Context.MODE_PRIVATE);
+            pojoArrayList = new ArrayList<Pojo>();
+            pojo = new Pojo();
 
+            initView();
+            initListView();
+            setListner();
+
+        }
 
     }
 
@@ -159,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addContact(){
 
-        final ImageButton selectContact;
+
         final EditText et_number;
         final RadioButton block,silent;
         final Button btn_add;
@@ -193,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
                  * Insert method to contact picker
                  */
                 //TODO Insert logic for contact picker
+                pickContact();
             }
         });
 
@@ -205,19 +211,19 @@ public class MainActivity extends AppCompatActivity {
         final RadioButton block,silent;
         final Button btn_add;
 
-        final Dialog alertContact = new Dialog(context,android.R.style.Theme_DeviceDefault_Light_Dialog);
-        alertContact.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        Window window = alertContact.getWindow();
+        final Dialog alertGroup = new Dialog(context,android.R.style.Theme_DeviceDefault_Light_Dialog);
+        alertGroup.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Window window = alertGroup.getWindow();
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
-        alertContact.setCancelable(true);
-        alertContact.setContentView(R.layout.dialog_add_group);
-        alertContact.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        alertGroup.setCancelable(true);
+        alertGroup.setContentView(R.layout.dialog_add_group);
+        alertGroup.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        et_number = (EditText) alertContact.findViewById(R.id.et_number);
-        block = (RadioButton) alertContact.findViewById(R.id.block);
-        silent = (RadioButton) alertContact.findViewById(R.id.silent);
-        btn_add = (Button) alertContact.findViewById(R.id.btn_add);
+        et_number = (EditText) alertGroup.findViewById(R.id.et_number);
+        block = (RadioButton) alertGroup.findViewById(R.id.block);
+        silent = (RadioButton) alertGroup.findViewById(R.id.silent);
+        btn_add = (Button) alertGroup.findViewById(R.id.btn_add);
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -233,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                         pojo.setNumber(et_number.getText().toString());
                         sharedPreff.UpdateList(pojo,"MyObject");
                         refreshListView();
-                        alertContact.cancel();
+                        alertGroup.cancel();
                     }
                     else
                         Toast.makeText(context,"Select an Action",Toast.LENGTH_SHORT).show();
@@ -243,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        alertContact.show();
+        alertGroup.show();
     }
 
     private void executeUserPermissionTree() {
@@ -260,6 +266,10 @@ public class MainActivity extends AppCompatActivity {
             permissionsNeeded.add("Access phone state");
         if (!addPermission(permissionsList, Manifest.permission.CALL_PHONE))
             permissionsNeeded.add("Access phone state");
+        if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS))
+            permissionsNeeded.add("Access read contacts");
+        if (!addPermission(permissionsList, Manifest.permission.WRITE_CONTACTS))
+            permissionsNeeded.add("Access write contacts");
 
 
         if (permissionsList.size() > 0) {
@@ -329,6 +339,8 @@ public class MainActivity extends AppCompatActivity {
                 perms.put(Manifest.permission.MODIFY_AUDIO_SETTINGS, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.CALL_PHONE, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
                     perms.put(permissions[i], grantResults[i]);
@@ -337,8 +349,8 @@ public class MainActivity extends AppCompatActivity {
                         && perms.get(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
                         && */
                         perms.get(Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                                && perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                                && perms.get(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
                         ) {
                     // All Permissions Granted
                     isGranted = true;
@@ -365,6 +377,52 @@ public class MainActivity extends AppCompatActivity {
         stopService(serviceIntent);
     }
 
-
+    public void pickContact()
+    {
+        Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+        startActivityForResult(contactPickerIntent, RESULT_PICK_CONTACT);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // check whether the result is ok
+        if (resultCode == RESULT_OK) {
+            // Check for the request code, we might be usign multiple startActivityForReslut
+            switch (requestCode) {
+                case RESULT_PICK_CONTACT:
+                    contactPicked(data);
+                    break;
+            }
+        } else {
+            Log.e("MainActivity", "Failed to pick contact");
+        }
+    }
+    /**
+     * Query the Uri and read contact details. Handle the picked contact data.
+     * @param data
+     */
+    private void contactPicked(Intent data) {
+        Cursor cursor = null;
+        try {
+            String phoneNo = null ;
+            String name = null;
+            // getData() method will have the Content Uri of the selected contact
+            Uri uri = data.getData();
+            //Query the content uri
+            cursor = getContentResolver().query(uri, null, null, null, null);
+            cursor.moveToFirst();
+            // column index of the phone number
+            int  phoneIndex =cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            // column index of the contact name
+            int  nameIndex =cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+            phoneNo = cursor.getString(phoneIndex);
+            name = cursor.getString(nameIndex);
+            Uri photo = Uri.withAppendedPath(uri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+            if(null != selectContact && null != photo)
+            selectContact.setImageURI(photo);
+            Log.e("Contact", "Name-" + name + " Number-" + phoneNo + " Pic-" + phoneNo.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
