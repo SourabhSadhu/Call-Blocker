@@ -26,7 +26,7 @@
         <receiver android:name="com.model.CallBarring"
             android:enabled="true"
             android:exported="true">
-            <intent-filter android:priority="100">
+            <intent-filter android:priority="999">
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
@@ -36,7 +36,11 @@
         <service
             android:name="com.model.CallBarringService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </service>
 
         <activity android:name=".LogActivity" />
 
