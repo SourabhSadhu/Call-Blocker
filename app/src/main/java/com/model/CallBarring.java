@@ -76,7 +76,7 @@ public class CallBarring extends BroadcastReceiver{
         TelephonyManager telephony = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
 
-        Pojo pojo = new Pojo(numberAction+"("+action+")",action,1,getCurrentDate());
+        Pojo pojo = new Pojo("",numberAction+"("+action+")",action,1,getCurrentDate());
         SharedPreff putLog = new SharedPreff(context,"Log");
         List<Pojo> lastData = new ArrayList<>();
         lastData = putLog.Retreive("Log");

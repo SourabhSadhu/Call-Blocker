@@ -50,12 +50,18 @@ public class MainActivity extends AppCompatActivity {
     private CustomAdapter customAdapter;
     private SharedPreff sharedPreff;
     private Context context;
-    private SharedPreferences mPrefs;
+//    private SharedPreferences mPrefs;
 
     private Pojo pojo;
     private List<Pojo> pojoArrayList;
 
-    private ImageButton selectContact;
+    private EditText et_name,et_number;
+    private RadioButton block,silent;
+    private Button btn_add;
+
+    String phoneNo = null ;
+    String name = null;
+
     private static final int RESULT_PICK_CONTACT = 100;
 
     @Override
@@ -70,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
         if(isGranted) {
             startService(new Intent(this, CallBarringService.class));
             sharedPreff = new SharedPreff(context, "MyObject");
-            mPrefs = getSharedPreferences("MyObject", Context.MODE_PRIVATE);
-            pojoArrayList = new ArrayList<Pojo>();
+//            mPrefs = getSharedPreferences("MyObject", Context.MODE_PRIVATE);
+            pojoArrayList = new ArrayList<>();
             pojo = new Pojo();
 
             initView();
@@ -92,13 +98,13 @@ public class MainActivity extends AppCompatActivity {
         add_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addContact();
+                addContactGroup(1);
             }
         });
         add_group.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addGroup();
+                addContactGroup(2);
             }
         });
         view_log.setOnClickListener(new View.OnClickListener() {
@@ -162,68 +168,33 @@ public class MainActivity extends AppCompatActivity {
         customAdapter.refreshAdapter(sharedPreff.Retreive("MyObject"));
     }
 
-    private void addContact(){
+    private void addContactGroup(int type){
 
 
-        final EditText et_number;
-        final RadioButton block,silent;
-        final Button btn_add;
-
-        Dialog alertContact = new Dialog(context,android.R.style.Theme_DeviceDefault_Light_Dialog);
-        alertContact.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        Window window = alertContact.getWindow();
-        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        window.setGravity(Gravity.CENTER);
-        alertContact.setCancelable(true);
-        alertContact.setContentView(R.layout.dialog_add_contact);
-        alertContact.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        selectContact = (ImageButton) alertContact.findViewById(R.id.selectContact);
-        et_number = (EditText) alertContact.findViewById(R.id.et_number);
-        block = (RadioButton) alertContact.findViewById(R.id.block);
-        silent = (RadioButton) alertContact.findViewById(R.id.silent);
-        btn_add = (Button) alertContact.findViewById(R.id.btn_add);
-
-        selectContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                /**
-                 * Method to clear previous number
-                 */
-                if(et_number.getText() != null && et_number.getText().toString().trim().length() > 0){
-                    et_number.setText("");
-                }
-                /**
-                 * Insert method to contact picker
-                 */
-                //TODO Insert logic for contact picker
-                pickContact();
-            }
-        });
-
-        alertContact.show();
-    }
-
-    private void addGroup(){
-
-        final EditText et_number;
-        final RadioButton block,silent;
-        final Button btn_add;
 
         final Dialog alertGroup = new Dialog(context,android.R.style.Theme_DeviceDefault_Light_Dialog);
         alertGroup.requestWindowFeature(Window.FEATURE_NO_TITLE);
         Window window = alertGroup.getWindow();
+        assert window != null;
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
         alertGroup.setCancelable(true);
-        alertGroup.setContentView(R.layout.dialog_add_group);
+        alertGroup.setContentView(R.layout.dialog_add_contact);
         alertGroup.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
+        et_name = (EditText) alertGroup.findViewById(R.id.et_name);
         et_number = (EditText) alertGroup.findViewById(R.id.et_number);
         block = (RadioButton) alertGroup.findViewById(R.id.block);
         silent = (RadioButton) alertGroup.findViewById(R.id.silent);
         btn_add = (Button) alertGroup.findViewById(R.id.btn_add);
+
+        et_name.setText("");
+        et_number.setText("");
+
+        if(type == 1){
+            pickContact();
+        }
+
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,6 +206,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(silent.isChecked()){
                             pojo.setAction("Silent");
+                        }
+
+                        //TODO set Pojo name
+                        if(et_name != null && et_name.getText().toString().length() > 0){
+                            pojo.setName(et_name.getText().toString().trim());
                         }
                         pojo.setNumber(et_number.getText().toString());
                         sharedPreff.UpdateList(pojo,"MyObject");
@@ -253,9 +229,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void executeUserPermissionTree() {
-        List<String> permissionsNeeded = new ArrayList<String>();
+        List<String> permissionsNeeded = new ArrayList<>();
 
-        final List<String> permissionsList = new ArrayList<String>();
+        final List<String> permissionsList = new ArrayList<>();
         if (!addPermission(permissionsList, Manifest.permission.RECEIVE_BOOT_COMPLETED))
             permissionsNeeded.add("BOOT Completion");
         if (!addPermission(permissionsList, Manifest.permission.ACCESS_NOTIFICATION_POLICY))
@@ -366,10 +342,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startService() {
-        serviceIntent=new Intent(getApplicationContext(), CallBarringService.class);
-        startService(serviceIntent);
-    }
+//    public void startService() {
+//        serviceIntent=new Intent(getApplicationContext(), CallBarringService.class);
+//        startService(serviceIntent);
+//    }
 
     public void stopService() {
         CallBarring.ACTION_STOP = true;
@@ -403,8 +379,6 @@ public class MainActivity extends AppCompatActivity {
     private void contactPicked(Intent data) {
         Cursor cursor = null;
         try {
-            String phoneNo = null ;
-            String name = null;
             // getData() method will have the Content Uri of the selected contact
             Uri uri = data.getData();
             //Query the content uri
@@ -416,10 +390,16 @@ public class MainActivity extends AppCompatActivity {
             int  nameIndex =cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
             phoneNo = cursor.getString(phoneIndex);
             name = cursor.getString(nameIndex);
-            Uri photo = Uri.withAppendedPath(uri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-            if(null != selectContact && null != photo)
-            selectContact.setImageURI(photo);
-            Log.e("Contact", "Name-" + name + " Number-" + phoneNo + " Pic-" + phoneNo.toString());
+//            Uri photo = Uri.withAppendedPath(uri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+            Log.e("Contact", "Name-" + name + " Number-" + phoneNo + " Pic-" + phoneNo);
+
+            phoneNo = phoneNo.replaceAll("-","");
+            if(!phoneNo.substring(0,3).equalsIgnoreCase("+91"))
+                phoneNo = "+91" + phoneNo;
+            if(et_name != null && et_number != null) {
+                et_name.setText(name);
+                et_number.setText(phoneNo.replaceAll("-",""));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
