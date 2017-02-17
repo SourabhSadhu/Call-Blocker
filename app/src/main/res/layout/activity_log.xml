@@ -7,21 +7,36 @@
     android:padding="5dp"
     tools:context="com.controller.LogActivity">
 
-    <ListView
-        android:id="@+id/list_view_log"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_gravity="center"
-        tools:listitem="@layout/spinner_list_items">
-    </ListView>
-
-    <ImageButton
-        android:id="@+id/delete_log"
+    <LinearLayout
+        android:id="@+id/lin_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_clean_log"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/white"
-        />
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal"
+        >
+
+        <ImageButton
+            android:id="@+id/delete_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_clean_log"
+            android:background="@color/white"
+            />
+
+    </LinearLayout>
+
+    <ListView
+        android:layout_above="@+id/lin_bottom"
+        android:id="@+id/list_view_log"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_alignParentTop="true"
+        >
+    </ListView>
+
+
+
 </RelativeLayout>

@@ -199,29 +199,27 @@ public class MainActivity extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(et_number.getText() != null && et_number.getText().toString().length()>0){
-                    if(block.isChecked() || silent.isChecked()){
-                        if(block.isChecked()){
-                            pojo.setAction("Block");
-                        }
-                        else if(silent.isChecked()){
-                            pojo.setAction("Silent");
-                        }
-
-                        //TODO set Pojo name
-                        if(et_name != null && et_name.getText().toString().length() > 0){
-                            pojo.setName(et_name.getText().toString().trim());
-                        }
-                        pojo.setNumber(et_number.getText().toString());
-                        sharedPreff.UpdateList(pojo,"MyObject");
-                        refreshListView();
-                        alertGroup.cancel();
-                    }
-                    else
-                        Toast.makeText(context,"Select an Action",Toast.LENGTH_SHORT).show();
-                }
-                else
-                    Toast.makeText(context,"Enter a number",Toast.LENGTH_SHORT).show();
+                if (et_number.getText() != null && et_number.getText().toString().length() > 0) {
+                    if (et_name.getText() != null && et_name.getText().toString().length() > 0) {
+                        if (block.isChecked() || silent.isChecked()) {
+                            if (block.isChecked()) {
+                                pojo.setAction("Block");
+                            } else if (silent.isChecked()) {
+                                pojo.setAction("Silent");
+                            }
+                            if (et_name != null && et_name.getText().toString().length() > 0) {
+                                pojo.setName(et_name.getText().toString().trim());
+                            }
+                            pojo.setNumber(et_number.getText().toString());
+                            sharedPreff.UpdateList(pojo, "MyObject");
+                            refreshListView();
+                            alertGroup.cancel();
+                        } else
+                            Toast.makeText(context, "Enter a name", Toast.LENGTH_SHORT).show();
+                    } else
+                        Toast.makeText(context, "Select an Action", Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(context, "Enter a number", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -394,6 +392,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Contact", "Name-" + name + " Number-" + phoneNo + " Pic-" + phoneNo);
 
             phoneNo = phoneNo.replaceAll("-","");
+            phoneNo = phoneNo.replaceAll(" ","");
             if(!phoneNo.substring(0,3).equalsIgnoreCase("+91"))
                 phoneNo = "+91" + phoneNo;
             if(et_name != null && et_number != null) {

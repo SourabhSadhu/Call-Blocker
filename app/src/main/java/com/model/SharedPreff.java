@@ -61,8 +61,7 @@ public class SharedPreff extends ContextWrapper {
 
     public void UpdateList(Pojo p,String name) {
         List<Pojo> updateList = Retreive(name);
-        if (updateList != null){
-        }else{
+        if (updateList == null){
             updateList = new ArrayList<Pojo>();
         }
         updateList.add(p);
@@ -81,6 +80,10 @@ public class SharedPreff extends ContextWrapper {
         for (int i = 0; i < list.size(); i++) {
             Log.d("For Loop Data", "Mobile Number " + list.get(i).getNumber()+":Action "+list.get(i).getAction());
         }
+    }
+
+    public void PrintList(Pojo list){
+        Log.d("For Loop Data", "Mobile Number " + list.getNumber()+":Action "+list.getAction());
     }
 
     public void ClearAll(String name){

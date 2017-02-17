@@ -44,17 +44,18 @@ public class CallBarring extends BroadcastReceiver{
                 Log.d("Call", "State " + data1 + ":Incoming " + number + "list size" + list.size());
                 if(ACTION_STOP == false) {
                     for(int iter = 0; iter<list.size();iter++){
-                        String mobNumber,action;
+                        String mobNumber,action,name;
                         int length;
                         mobNumber = list.get(iter).getNumber();
                         action = list.get(iter).getAction();
+                        name = list.get(iter).getName();
                         length = mobNumber.length();
                         Log.d("Call Barring","Mobile Number "+mobNumber+":Action "+action+":Number length "+length);
                         Log.d("Call Barring", "Received Number "+number);
                         if (number.substring(0, length).equals(mobNumber)) {
                             Log.d("Call Barring","Taking Action");
                             audioManager= (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-                            disconnectPhoneItelephony(context,action,number);
+                            disconnectPhoneItelephony(context,name,action,number);
                             return;
                         }
                     }
@@ -71,12 +72,12 @@ public class CallBarring extends BroadcastReceiver{
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void disconnectPhoneItelephony(Context context, String action, String numberAction) {
+    private void disconnectPhoneItelephony(Context context, String name, String action, String numberAction) {
         ITelephony telephonyService;
         TelephonyManager telephony = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
 
-        Pojo pojo = new Pojo("",numberAction+"("+action+")",action,1,getCurrentDate());
+        Pojo pojo = new Pojo(name, numberAction, action, 1, getCurrentDate());
         SharedPreff putLog = new SharedPreff(context,"Log");
         List<Pojo> lastData = new ArrayList<>();
         lastData = putLog.Retreive("Log");
@@ -92,7 +93,6 @@ public class CallBarring extends BroadcastReceiver{
             telephonyService = (ITelephony) m.invoke(telephony);
             if(action.equals("Block")){
                 telephonyService.endCall();
-                Log.d("Telephony Service","Call Dropped");
             } else if(action.equals("Silent")){
                 telephonyService.silenceRinger();
                 if(audioManager.getRingerMode()==AudioManager.RINGER_MODE_NORMAL) {
@@ -105,15 +105,14 @@ public class CallBarring extends BroadcastReceiver{
                         }
                     }, 45000);
                 }
-                Log.d("Telephony Service","Call Silent");
             } else if(action.equals("Answer")){
                 telephonyService.answerRingingCall();
-                Log.d("Telephony Service","Call Answered");
             }
 
             if(timeCheck(lastDateTime))
                 putLog.UpdateList(pojo,"Log");
-            Log.d("Call", "Rejected");
+
+            putLog.PrintList(putLog.Retreive("Log"));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,7 +124,7 @@ public class CallBarring extends BroadcastReceiver{
     }
 
     public String getCurrentDate() {
-        SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd HH:mm");
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM HH:mm");
         String thisDate = currentDate.format(new Date());
         return thisDate;
     }
@@ -134,7 +133,7 @@ public class CallBarring extends BroadcastReceiver{
         if (lastDateTime.equals("")) {
             return true;
         } else {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd HH:mm");
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM HH:mm");
             Date sysTime = null;
             Date lastTime = null;
             try {
