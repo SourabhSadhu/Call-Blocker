@@ -1,0 +1,96 @@
+package com.controller;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.model.ColorGenerator;
+import com.model.Pojo;
+
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Created by sourabh on 17/2/17.
+ */
+
+public class CustomLogAdapter extends ArrayAdapter {
+
+    private Context context;
+    private Pojo pojo;
+    private List<Pojo> pojolist;
+
+    private RelativeLayout contact_image;
+    private TextView contact_image_textview,contact_name,contact_number,contact_action,contact_log_date,contact_log_time;
+
+    public CustomLogAdapter(@NonNull Context context, @LayoutRes int resource, List<Pojo> pojolist) {
+        super(context, resource, pojolist);
+        this.context = context;
+        this.pojo = new Pojo();
+        this.pojolist = pojolist;
+    }
+
+    @Override
+    public int getCount() {
+        return pojolist.size();
+    }
+
+    @NonNull
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+//        return super.getView(position, convertView, parent);
+        View v = convertView;
+        if (v == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = inflater.inflate(R.layout.activity_contact_list, parent, false);
+        }
+
+        contact_image = (RelativeLayout) v.findViewById(R.id.contact_image);
+        contact_image_textview = (TextView) v.findViewById(R.id.contact_image_textview);
+        contact_name = (TextView) v.findViewById(R.id.contact_name);
+        contact_number = (TextView) v.findViewById(R.id.contact_number);
+        contact_action = (TextView) v.findViewById(R.id.contact_action);
+        contact_log_date = (TextView) v.findViewById(R.id.contact_log_date);
+        contact_log_time = (TextView) v.findViewById(R.id.contact_log_time);
+
+        pojo = pojolist.get(position);
+
+        contact_image.setBackgroundColor(ColorGenerator.getColor());
+        if(null != pojo.getName()) {
+            contact_image_textview.setText(nameCred(pojo.getName()));
+            contact_name.setText(pojo.getName());
+        }
+        if(null != pojo.getNumber())
+        contact_number.setText(pojo.getNumber());
+        if(null != pojo.getAction())
+        contact_action.setText(pojo.getAction());
+        if(null != pojo.getDateTime() && pojo.getDateTime().length()>10) {
+            contact_log_date.setText(pojo.getDateTime().substring(0, 5));
+            contact_log_time.setText(pojo.getDateTime().substring(6));
+        }
+
+        return v;
+    }
+
+    public String nameCred(String name){
+        if(name.contains(" ")){
+            String[] seperated = name.split(" ",2);
+            return seperated[0].substring(0,1).toUpperCase() + seperated[1].substring(0,1).toUpperCase();
+        }
+        else
+            return name.substring(0,1).toUpperCase();
+    }
+
+
+    public void refreshAdapter(List<Pojo> log) {
+        notifyDataSetChanged();
+    }
+}

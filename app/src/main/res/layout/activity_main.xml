@@ -10,6 +10,115 @@
     android:padding="5dp"
     tools:context="com.controller.MainActivity">
 
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/footer1"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:gravity="center"
+            >
+            <ImageButton
+                android:id="@+id/stop_service"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_stop_blocking"
+                android:background="@color/white"
+                />
+            <TextView
+                android:id="@+id/stop_service_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/stop_service_text"
+                />
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:gravity="center"
+            >
+            <ImageButton
+                android:id="@+id/add_contact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_add_user_color"
+                android:background="@color/white"
+                />
+            <TextView
+                android:id="@+id/add_contact_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/add_contact_text"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:gravity="center"
+            >
+            <ImageButton
+                android:id="@+id/add_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_add_user_group"
+                android:background="@color/white"
+                />
+            <TextView
+                android:id="@+id/add_group_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/add_group_text"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:gravity="center"
+            >
+            <ImageButton
+                android:id="@+id/view_log"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_view_log"
+                android:background="@color/white" />
+            <TextView
+                android:id="@+id/view_log_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/view_log_text"
+                />
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
     <!-- <LinearLayout
         android:id="@+id/header1"
         android:layout_width="match_parent"
@@ -45,119 +154,14 @@
 
     <ListView
         android:id="@+id/list_view"
-        android:layout_alignParentTop="true"
         android:layout_above="@+id/footer1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="5dp"
-        android:layout_gravity="center"
         tools:listitem="@layout/spinner_list_items">
     </ListView>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:id="@+id/footer1"
-        android:orientation="horizontal">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="5dp"
-            android:gravity="center"
-            >
-            <ImageButton
-                android:id="@+id/stop_service"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_stop_blocking"
-                android:background="@color/white"
-                />
-            <TextView
-                android:id="@+id/stop_service_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
 
-                android:text="Stop Service"
-                />
-        </LinearLayout>
-
-
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="5dp"
-            android:gravity="center"
-            >
-            <ImageButton
-                android:id="@+id/add_contact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_add_user_color"
-                android:background="@color/white"
-                />
-            <TextView
-                android:id="@+id/add_contact_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Add Contact"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="5dp"
-            android:gravity="center"
-            >
-            <ImageButton
-                android:id="@+id/add_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_add_user_group"
-                android:background="@color/white"
-                />
-            <TextView
-                android:id="@+id/add_group_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Add Group"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="5dp"
-            android:gravity="center"
-            >
-            <ImageButton
-                android:id="@+id/view_log"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_view_log"
-                android:background="@color/white" />
-            <TextView
-                android:id="@+id/view_log_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="View Log"
-                />
-        </LinearLayout>
-
-
-    </LinearLayout>
 
 </RelativeLayout>

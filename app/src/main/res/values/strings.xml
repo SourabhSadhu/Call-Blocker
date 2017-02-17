@@ -5,9 +5,10 @@
     <string name="id">ID</string>
     <string name="number">Number</string>
     <string name="status">Status</string>
-    <string name="d"></string>
-    <string name="e"></string>
-    <string name="f"></string>
+    <string name="stop_service_text">Stop Service</string>
+    <string name="add_contact_text">Add Contact</string>
+    <string name="add_group_text">Add Group</string>
+    <string name="view_log_text">View Log</string>
     <string name="spinner_prompt">Action</string>
     <string-array name="spinner_array">
         <item>Action</item>

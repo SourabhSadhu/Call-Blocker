@@ -9,7 +9,7 @@
 
 
     <EditText
-        android:id="@+id/et_number"
+        android:id="@+id/et_group_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -20,21 +20,21 @@
         />
 
     <RadioGroup
-        android:id="@+id/radio_grp"
+        android:id="@+id/group_radio_grp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         >
         <RadioButton
-            android:id="@+id/block"
+            android:id="@+id/group_block"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Block"
             android:paddingRight="10dp"
             />
         <RadioButton
-            android:id="@+id/silent"
+            android:id="@+id/group_silent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Silent"
@@ -42,7 +42,7 @@
     </RadioGroup>
 
     <Button
-        android:id="@+id/btn_add"
+        android:id="@+id/btn_group_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"

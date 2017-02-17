@@ -6,6 +6,7 @@ package com.model;
 
 public class Pojo implements java.io.Serializable {
 
+    String name;
     String number;
     String action;
     int id;
@@ -13,13 +14,20 @@ public class Pojo implements java.io.Serializable {
     public Pojo(){
 
     }
-    public Pojo(String number, String action, int id, String dateTime) {
+    public Pojo(String name,String number, String action, int id, String dateTime) {
+        this.name = name;
         this.number = number;
         this.action = action;
         this.id = id;
         this.dateTime = dateTime;
     }
 
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
     public String getNumber() {
         return number;
     }
