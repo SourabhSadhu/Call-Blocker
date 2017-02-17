@@ -88,6 +88,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        customAdapter.refreshAdapter(sharedPreff.Retreive("Log"));
+    }
+
     public void setListner() {
         stop_service.setOnClickListener(new View.OnClickListener() {
             @Override

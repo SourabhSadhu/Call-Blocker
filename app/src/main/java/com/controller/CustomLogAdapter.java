@@ -64,12 +64,18 @@ public class CustomLogAdapter extends ArrayAdapter {
         pojo = pojolist.get(position);
 
         contact_image.setBackgroundColor(ColorGenerator.getColor());
-        contact_image_textview.setText(nameCred(pojo.getName()));
-        contact_name.setText(pojo.getName());
+        if(null != pojo.getName()) {
+            contact_image_textview.setText(nameCred(pojo.getName()));
+            contact_name.setText(pojo.getName());
+        }
+        if(null != pojo.getNumber())
         contact_number.setText(pojo.getNumber());
+        if(null != pojo.getAction())
         contact_action.setText(pojo.getAction());
-        contact_log_date.setText(pojo.getDateTime().substring(0,5));
-        contact_log_time.setText(pojo.getDateTime().substring(6));
+        if(null != pojo.getDateTime() && pojo.getDateTime().length()>10) {
+            contact_log_date.setText(pojo.getDateTime().substring(0, 5));
+            contact_log_time.setText(pojo.getDateTime().substring(6));
+        }
 
         return v;
     }
