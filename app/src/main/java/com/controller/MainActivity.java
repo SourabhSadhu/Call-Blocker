@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton stop_service,add_contact,add_group,view_log;
     private ListView listView;
 
-    private CustomAdapter customAdapter;
+    private CustomLogAdapter customAdapter;
     private SharedPreff sharedPreff;
     private Context context;
 //    private SharedPreferences mPrefs;
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initListView(){
         pojoArrayList = sharedPreff.Retreive("MyObject");
-        customAdapter = new CustomAdapter(context,R.layout.spinner_list_items,pojoArrayList);
+        customAdapter = new CustomLogAdapter(context,R.layout.activity_contact_list,pojoArrayList);
         listView.setAdapter(customAdapter);
     }
 
