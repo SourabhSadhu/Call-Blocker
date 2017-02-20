@@ -46,7 +46,7 @@ public class SharedPreff extends ContextWrapper {
 
     public List<Pojo> Retreive(String name) {
         String json = mPrefs.getString(name, "");
-        Log.d("Shared Preference", "Retreived Data" + json);
+        Log.d("Shared Preference", "Retreived Data List" + json);
         Type listType = new TypeToken<ArrayList<Pojo>>() {
         }.getType();
         List<Pojo> obj = (List<Pojo>) gson.fromJson(json, listType);
@@ -57,6 +57,21 @@ public class SharedPreff extends ContextWrapper {
             }
         }
         return obj;
+    }
+
+    public Pojo Retreive(int position,String name) {
+        String json = mPrefs.getString(name, "");
+        Log.d("Shared Preference", "Retreived Data Object" + json);
+        Type listType = new TypeToken<ArrayList<Pojo>>() {
+        }.getType();
+        List<Pojo> obj = (List<Pojo>) gson.fromJson(json, listType);
+
+        if(obj!=null) {
+            for (int i = 0; i < obj.size(); i++) {
+                obj.get(i).setId(i);
+            }
+        }
+        return obj.get(position);
     }
 
     public void UpdateList(Pojo p,String name) {
@@ -72,7 +87,16 @@ public class SharedPreff extends ContextWrapper {
         List<Pojo> list = Retreive(name);
         list.remove(position);
         SaveSerialize(list);
+    }
+
+    public void EditList(String name,int position, Pojo p){
+        List<Pojo> list = Retreive(name);
         PrintList(list);
+        list.get(position).setName(p.getName());
+        list.get(position).setNumber(p.getNumber());
+        list.get(position).setAction(p.getAction());
+        PrintList(list);
+        SaveSerialize(list);
     }
 
     public void PrintList(List<Pojo> list){
@@ -87,8 +111,6 @@ public class SharedPreff extends ContextWrapper {
     }
 
     public void ClearAll(String name){
-//        prefsEditor.putString(name, null);
-//        prefsEditor.commit();
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
         prefsEditor.remove(name).commit();
     }

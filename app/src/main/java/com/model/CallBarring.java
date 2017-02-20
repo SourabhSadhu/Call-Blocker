@@ -10,6 +10,10 @@ import android.telecom.Call;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.controller.CustomAdapter;
+import com.controller.CustomLogAdapter;
+import com.controller.LogActivity;
 import com.model.*;
 
 import com.android.internal.telephony.ITelephony;
@@ -23,51 +27,54 @@ import java.util.Date;
 import java.util.List;
 
 
-public class CallBarring extends BroadcastReceiver{
+public class CallBarring extends BroadcastReceiver {
 
     private String number;
     private static List<Pojo> list = new ArrayList<>();
     public static Boolean ACTION_STOP = false;
     private Context context;
-    AudioManager audioManager;
+    private AudioManager audioManager;
+    private CreateNotification createNotification;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        this.context = context;
         if (!intent.getAction().equals("android.intent.action.PHONE_STATE"))
             return;
         else {
             number = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
-            if(number != null ) {
+            if (number != null) {
+                createNotification = new CreateNotification(context);
                 list = new SharedPreff(context, "MyObject").Retreive("MyObject");
                 String data1 = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
                 int data2 = TelephonyManager.CALL_STATE_RINGING;
                 Log.d("Call", "State " + data1 + ":Incoming " + number + "list size" + list.size());
-                if(ACTION_STOP == false) {
-                    for(int iter = 0; iter<list.size();iter++){
-                        String mobNumber,action,name;
+                if (ACTION_STOP == false) {
+                    for (int iter = 0; iter < list.size(); iter++) {
+                        String mobNumber, action, name;
                         int length;
                         mobNumber = list.get(iter).getNumber();
                         action = list.get(iter).getAction();
                         name = list.get(iter).getName();
                         length = mobNumber.length();
-                        Log.d("Call Barring","Mobile Number "+mobNumber+":Action "+action+":Number length "+length);
-                        Log.d("Call Barring", "Received Number "+number);
-                        if (number.substring(0, length).equals(mobNumber)) {
-                            Log.d("Call Barring","Taking Action");
-                            audioManager= (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-                            disconnectPhoneItelephony(context,name,action,number);
+                        Log.d("Call Barring", "Mobile Number " + mobNumber + ":Action " + action + ":Number length " + length);
+                        Log.d("Call Barring", "Received Number " + number);
+                        if (number.length() >= length && number.substring(0, length).equals(mobNumber)) {
+                            Log.d("Call Barring", "Taking Action");
+                            audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                            disconnectPhoneItelephony(context, name, action, number);
                             return;
                         }
                     }
 
-                }else{
-                    Log.d("CallBarring","Broadcast action stopped");
+                } else {
+                    Log.d("CallBarring", "Broadcast action stopped");
                 }
             }
         }
     }
 
-    public void UpdateRecord(Context context){
+    public void UpdateRecord(Context context) {
 
     }
 
@@ -78,11 +85,11 @@ public class CallBarring extends BroadcastReceiver{
                 context.getSystemService(Context.TELEPHONY_SERVICE);
 
         Pojo pojo = new Pojo(name, numberAction, action, 1, getCurrentDate());
-        SharedPreff putLog = new SharedPreff(context,"Log");
+        SharedPreff putLog = new SharedPreff(context, "Log");
         List<Pojo> lastData = new ArrayList<>();
         lastData = putLog.Retreive("Log");
         String lastDateTime = "";
-        if(lastData != null && lastData.size()>0) {
+        if (lastData != null && lastData.size() > 0) {
             lastDateTime = lastData.get(lastData.size() - 1).getDateTime();
         }
 
@@ -91,11 +98,11 @@ public class CallBarring extends BroadcastReceiver{
             Method m = c.getDeclaredMethod("getITelephony");
             m.setAccessible(true);
             telephonyService = (ITelephony) m.invoke(telephony);
-            if(action.equals("Block")){
+            if (action.equals("Block")) {
                 telephonyService.endCall();
-            } else if(action.equals("Silent")){
+            } else if (action.equals("Silent")) {
                 telephonyService.silenceRinger();
-                if(audioManager.getRingerMode()==AudioManager.RINGER_MODE_NORMAL) {
+                if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                     audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
@@ -105,21 +112,22 @@ public class CallBarring extends BroadcastReceiver{
                         }
                     }, 45000);
                 }
-            } else if(action.equals("Answer")){
+            } else if (action.equals("Answer")) {
                 telephonyService.answerRingingCall();
             }
 
-            if(timeCheck(lastDateTime))
-                putLog.UpdateList(pojo,"Log");
+            if (timeCheck(lastDateTime)) {
+                putLog.UpdateList(pojo, "Log");
+            }
 
-            putLog.PrintList(putLog.Retreive("Log"));
+            createNotification.generateNotification("Action taken for " + name, "View Details", LogActivity.class);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void backToNormal(){
+    public void backToNormal() {
         audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
     }
 

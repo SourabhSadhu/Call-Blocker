@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +33,7 @@ public class CustomLogAdapter extends ArrayAdapter {
 
     private RelativeLayout contact_image;
     private TextView contact_image_textview,contact_name,contact_number,contact_action,contact_log_date,contact_log_time;
+    private LinearLayout contact_log_date_time;
 
     public CustomLogAdapter(@NonNull Context context, @LayoutRes int resource, List<Pojo> pojolist) {
         super(context, resource, pojolist);
@@ -40,7 +44,10 @@ public class CustomLogAdapter extends ArrayAdapter {
 
     @Override
     public int getCount() {
-        return pojolist.size();
+        if(pojolist != null) {
+            return pojolist.size();
+        }
+        return 0;
     }
 
     @NonNull
@@ -58,6 +65,7 @@ public class CustomLogAdapter extends ArrayAdapter {
         contact_name = (TextView) v.findViewById(R.id.contact_name);
         contact_number = (TextView) v.findViewById(R.id.contact_number);
         contact_action = (TextView) v.findViewById(R.id.contact_action);
+        contact_log_date_time = (LinearLayout) v.findViewById(R.id.contact_log_date_time);
         contact_log_date = (TextView) v.findViewById(R.id.contact_log_date);
         contact_log_time = (TextView) v.findViewById(R.id.contact_log_time);
 
@@ -75,6 +83,27 @@ public class CustomLogAdapter extends ArrayAdapter {
         if(null != pojo.getDateTime() && pojo.getDateTime().length()>10) {
             contact_log_date.setText(pojo.getDateTime().substring(0, 5));
             contact_log_time.setText(pojo.getDateTime().substring(6));
+        }else{
+            try {
+                contact_log_date.setVisibility(View.GONE);
+                contact_log_time.setVisibility(View.GONE);
+                View checkImage = v.findViewById(R.id.dynamic_image);
+                if(checkImage == null) {
+                    ImageView action_img = new ImageView(context);
+                    action_img.setLayoutParams(new android.view.ViewGroup.LayoutParams(100, 100));
+                    action_img.setId(R.id.dynamic_image);
+//                    action_img.setMaxHeight(40);
+//                    action_img.setMaxWidth(40);
+                    if (pojo.getAction().equals("Silent"))
+                        action_img.setImageResource(R.mipmap.ic_menu_mute);
+                    else
+                        action_img.setImageResource(R.mipmap.ic_menu_block);
+                    // Adds the view to the layout
+                    contact_log_date_time.addView(action_img);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
         return v;
@@ -91,6 +120,10 @@ public class CustomLogAdapter extends ArrayAdapter {
 
 
     public void refreshAdapter(List<Pojo> log) {
-        notifyDataSetChanged();
+        if (pojolist != null && log != null) {
+            pojolist.clear();
+            this.pojolist.addAll(log);
+            this.notifyDataSetInvalidated();
+        }
     }
 }

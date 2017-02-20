@@ -17,4 +17,6 @@
         <item>Answer</item>
     </string-array>
 
+    <item type="id" name="dynamic_image" />
+
 </resources>

@@ -57,18 +57,23 @@ public class CallBarringService extends IntentService {
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
         Log.e("Service","Start");
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        super.onTaskRemoved(rootIntent);
+
+        Toast.makeText(this, "Service Removed", Toast.LENGTH_SHORT).show();
         Log.e("Service","Task Removed");
         Intent restartService = rootIntent; //new Intent(getApplicationContext(),this.getClass());
         restartService.setPackage(getPackageName());
-        PendingIntent restartServicePI = PendingIntent.getService(this, 1, restartService,PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmService = (AlarmManager)this.getSystemService(this.ALARM_SERVICE);
-        alarmService.set(AlarmManager.ELAPSED_REALTIME, 1000, restartServicePI);
+//        PendingIntent restartServicePI = PendingIntent.getService(this, 1, restartService,PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent restartServicePI = PendingIntent.getService(this, 0, restartService,0);
+        AlarmManager alarmService = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+//        alarmService.set(AlarmManager.ELAPSED_REALTIME, 1000, restartServicePI);
+        alarmService.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000, 3000, restartServicePI);
+        Toast.makeText(this, "Service Removed", Toast.LENGTH_SHORT).show();
+        super.onTaskRemoved(rootIntent);
     }
 
     @Override

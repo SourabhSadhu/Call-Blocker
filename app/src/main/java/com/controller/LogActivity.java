@@ -84,8 +84,8 @@ public class LogActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         listAdapter.refreshAdapter(sharedPreff.Retreive("Log"));
     }
 }
