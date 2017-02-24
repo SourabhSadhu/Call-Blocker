@@ -87,5 +87,15 @@ public class LogActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         listAdapter.refreshAdapter(sharedPreff.Retreive("Log"));
+        sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
+                context.getResources().getString(R.string.onResume));
     }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sharedPreff.SaveSerialize(null,context.getResources().getString(R.string.notification),context.getResources().getString(R.string.onPause));
+    }
+
 }

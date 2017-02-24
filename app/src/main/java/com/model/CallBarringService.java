@@ -10,7 +10,7 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.model.Log;
 import android.view.View;
 import android.widget.Toast;
 

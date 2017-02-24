@@ -1,15 +1,11 @@
 package com.controller;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -17,7 +13,12 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.SharedPreferences;
+//import android.util.Log;
+import com.model.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -101,6 +102,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         refreshListView();
+        sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
+                context.getResources().getString(R.string.onResume));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
+                context.getResources().getString(R.string.onPause));
     }
 
     public void setListner() {
@@ -114,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             add_contact.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    addEditContactGroup(1, null, 0);
+                    pickContact();
                 }
             });
             add_group.setOnClickListener(new View.OnClickListener() {
@@ -191,9 +201,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void addEditContactGroup(final int type, Pojo p, final int position) {
 
-        if (type == 1) {
+        /*if (type == 1) {
             pickContact();
-        }
+        }*/
 
         final Dialog alertGroup = new Dialog(context, android.R.style.Theme_DeviceDefault_Light_Dialog);
         alertGroup.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -251,7 +261,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                             refreshListView();
                             alertGroup.cancel();
-                            createNotification.generateNotification("Contact Added", phoneNo, MainActivity.class);
+                            createNotification.generateNotification("Contact Added", name, MainActivity.class);
+                            phoneNo = "";
+                            name = "";
                         } else
                             Toast.makeText(context, "Select an Action", Toast.LENGTH_SHORT).show();
                     } else
@@ -263,8 +275,7 @@ public class MainActivity extends AppCompatActivity {
 
         alertGroup.show();
 
-        phoneNo = "";
-        name = "";
+
     }
 
     private void populateCountryCode() {
@@ -421,9 +432,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // check whether the result is ok
         if (resultCode == RESULT_OK) {
-            // Check for the request code, we might be usign multiple startActivityForReslut
             switch (requestCode) {
                 case RESULT_PICK_CONTACT:
                     contactPicked(data);
@@ -437,30 +446,20 @@ public class MainActivity extends AppCompatActivity {
     private void contactPicked(Intent data) {
         Cursor cursor = null;
         try {
-            // getData() method will have the Content Uri of the selected contact
             Uri uri = data.getData();
-            //Query the content uri
             cursor = getContentResolver().query(uri, null, null, null, null);
             cursor.moveToFirst();
-            // column index of the phone number
             int phoneIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-            // column index of the contact name
             int nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
             phoneNo = cursor.getString(phoneIndex);
             name = cursor.getString(nameIndex);
 //            Uri photo = Uri.withAppendedPath(uri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
             Log.e("Contact", "Name-" + name + " Number-" + phoneNo + " Pic-" + phoneNo);
-
-           /* if (et_name != null && et_number != null) {
-                if (null != phoneNo) {
-                    phoneNo = phoneNo.replaceAll("-", "");
-                    phoneNo = phoneNo.replaceAll(" ", "");
-                    *//*et_name.setText(name);
-                    et_number.setText(phoneNo.replaceAll("-", ""));*//*
-                }
-            }*/
             phoneNo = phoneNo.replaceAll("-", "");
             phoneNo = phoneNo.replaceAll(" ", "");
+
+            addEditContactGroup(1, null, 0);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

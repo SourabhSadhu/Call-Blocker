@@ -19,4 +19,8 @@
 
     <item type="id" name="dynamic_image" />
 
+    <string name="notification">notification</string>
+    <string name="onPause">pause</string>
+    <string name="onResume">resume</string>
+
 </resources>

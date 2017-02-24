@@ -3,18 +3,15 @@ package com.model;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
+import android.preference.PreferenceManager;
+//import android.util.Log;
+import com.model.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.model.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by SourabhSadhu on 13-12-2016.
@@ -33,14 +30,18 @@ public class SharedPreff extends ContextWrapper {
         gson = new Gson();
         this.name = name;
         mPrefs = getSharedPreferences(name, thisContext.MODE_PRIVATE);
-        //getApplicationContext().
     }
 
-    public void SaveSerialize(List<Pojo> MyObject) {
-        String json = gson.toJson(MyObject);
-        Log.d("Shared Preference", "Saving Data" + json);
+    public void SaveSerialize(List<Pojo> MyObject,String name, String value) {
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        prefsEditor.putString(name, json);
+        if(null != MyObject && MyObject.size() > 0) {
+            String json = gson.toJson(MyObject);
+            Log.d("Shared Preference", "Saving Data" + json);
+            prefsEditor.putString(name, json);
+        }
+        if(null != value && value.length() > 0){
+            prefsEditor.putString(name, value);
+        }
         prefsEditor.commit();
     }
 
@@ -76,17 +77,23 @@ public class SharedPreff extends ContextWrapper {
 
     public void UpdateList(Pojo p,String name) {
         List<Pojo> updateList = Retreive(name);
-        if (updateList == null){
+        if (updateList == null) {
             updateList = new ArrayList<Pojo>();
         }
-        updateList.add(p);
-        SaveSerialize(updateList);
+        List ascendingList = new ArrayList();
+        ascendingList.add(0, p);
+        int indexSize = updateList.size();
+
+        for (int iter = 1; iter <= indexSize; iter++) {
+            ascendingList.add(iter, updateList.get(iter - 1));
+        }
+        SaveSerialize(ascendingList,name,"");
     }
 
     public void DeleteNumber(int position, String name) {
         List<Pojo> list = Retreive(name);
         list.remove(position);
-        SaveSerialize(list);
+        SaveSerialize(list,name,"");
     }
 
     public void EditList(String name,int position, Pojo p){
@@ -96,7 +103,7 @@ public class SharedPreff extends ContextWrapper {
         list.get(position).setNumber(p.getNumber());
         list.get(position).setAction(p.getAction());
         PrintList(list);
-        SaveSerialize(list);
+        SaveSerialize(list,name,"");
     }
 
     public void PrintList(List<Pojo> list){
@@ -114,4 +121,11 @@ public class SharedPreff extends ContextWrapper {
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
         prefsEditor.remove(name).commit();
     }
+
+    public String getString(String key, String def) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(thisContext);
+        String s = prefs.getString(key, def);
+        return s;
+    }
+
 }

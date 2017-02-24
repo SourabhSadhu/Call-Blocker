@@ -8,7 +8,7 @@ import android.media.AudioManager;
 import android.os.Handler;
 import android.telecom.Call;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+import com.model.Log;
 import android.widget.Toast;
 
 import com.controller.CustomAdapter;
@@ -90,7 +90,7 @@ public class CallBarring extends BroadcastReceiver {
         lastData = putLog.Retreive("Log");
         String lastDateTime = "";
         if (lastData != null && lastData.size() > 0) {
-            lastDateTime = lastData.get(lastData.size() - 1).getDateTime();
+            lastDateTime = lastData.get(0).getDateTime();
         }
 
         try {
@@ -104,6 +104,9 @@ public class CallBarring extends BroadcastReceiver {
                 telephonyService.silenceRinger();
                 if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                     audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                    if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE) {
+                        audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                    }
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
