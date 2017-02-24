@@ -121,9 +121,9 @@ public class CallBarring extends BroadcastReceiver {
 
             if (timeCheck(lastDateTime)) {
                 putLog.UpdateList(pojo, "Log");
+                createNotification.generateNotification("Action taken for " + name, "View Details", LogActivity.class);
             }
 
-            createNotification.generateNotification("Action taken for " + name, "View Details", LogActivity.class);
 
         } catch (Exception e) {
             e.printStackTrace();

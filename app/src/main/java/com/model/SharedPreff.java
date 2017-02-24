@@ -22,13 +22,11 @@ public class SharedPreff extends ContextWrapper {
     Context thisContext;
     SharedPreferences mPrefs;
     private Gson gson;
-    private String name;
 
     public SharedPreff(Context ctx, String name) {
         super(ctx);
         this.thisContext = ctx;
         gson = new Gson();
-        this.name = name;
         mPrefs = getSharedPreferences(name, thisContext.MODE_PRIVATE);
     }
 
@@ -38,9 +36,11 @@ public class SharedPreff extends ContextWrapper {
             String json = gson.toJson(MyObject);
             Log.d("Shared Preference", "Saving Data" + json);
             prefsEditor.putString(name, json);
+            PrintList(MyObject);
         }
         if(null != value && value.length() > 0){
             prefsEditor.putString(name, value);
+            Log.e("Printlist","Data " + name + " " +value);
         }
         prefsEditor.commit();
     }
@@ -67,12 +67,14 @@ public class SharedPreff extends ContextWrapper {
         }.getType();
         List<Pojo> obj = (List<Pojo>) gson.fromJson(json, listType);
 
-        if(obj!=null) {
+        if(obj == null) {
+            return null;
+        }else {
             for (int i = 0; i < obj.size(); i++) {
                 obj.get(i).setId(i);
             }
+            return position >= obj.size() ? obj.get(position) : null;
         }
-        return obj.get(position);
     }
 
     public void UpdateList(Pojo p,String name) {
@@ -104,6 +106,11 @@ public class SharedPreff extends ContextWrapper {
         list.get(position).setAction(p.getAction());
         PrintList(list);
         SaveSerialize(list,name,"");
+
+        String className = new Exception().getStackTrace()[0].getClassName();
+        String className1 = new Exception().getStackTrace()[1].getClassName();
+        Log.i("Class ",className);
+        Log.i("Class ",className1);
     }
 
     public void PrintList(List<Pojo> list){
@@ -123,9 +130,11 @@ public class SharedPreff extends ContextWrapper {
     }
 
     public String getString(String key, String def) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(thisContext);
-        String s = prefs.getString(key, def);
-        return s;
+        String json = mPrefs.getString(key, "");
+        Log.d("Shared Preference", "Retreived Data Object" + json);
+        Type stringType = new TypeToken<String>() {}.getType();
+        String obj = (String) gson.fromJson(json, stringType);
+        return obj;
     }
 
 }

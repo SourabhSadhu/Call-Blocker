@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         refreshListView();
         sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
                 context.getResources().getString(R.string.onResume));
+        sharedPreff.SaveSerialize(null,"nCount",Integer.toString(0));
     }
 
     @Override
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
                 context.getResources().getString(R.string.onPause));
+
     }
 
     public void setListner() {
