@@ -5,7 +5,7 @@ package com.model;
  */
 
 public class Log {
-    static final boolean LOG = true;
+    static final boolean LOG = false;
 
     public static void i(String tag, String string) {
         if (LOG) android.util.Log.i(tag, string);

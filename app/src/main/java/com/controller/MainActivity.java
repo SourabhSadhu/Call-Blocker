@@ -79,14 +79,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = MainActivity.this;
-
         executeUserPermissionTree();
-
-//        if(isGranted) {
-        //TODO isGranted is coming false for first time
         startService();
-        sharedPreff = new SharedPreff(context, "MyObject");
-//            mPrefs = getSharedPreferences("MyObject", Context.MODE_PRIVATE);
+        sharedPreff = new SharedPreff(context);
         pojoArrayList = new ArrayList<>();
         pojo = new Pojo();
 
@@ -94,25 +89,22 @@ public class MainActivity extends AppCompatActivity {
         initListView();
         setListner();
         createNotification = new CreateNotification(context);
-//        }
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         refreshListView();
-        sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
-                context.getResources().getString(R.string.onResume));
+        String count = sharedPreff.getString("nCount","");
+        Log.e("Count",count + " Int " + Integer.parseInt(count));
+        sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),context.getResources().getString(R.string.onResume));
         sharedPreff.SaveSerialize(null,"nCount",Integer.toString(0));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
-                context.getResources().getString(R.string.onPause));
-
+        sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),context.getResources().getString(R.string.onPause));
     }
 
     public void setListner() {
@@ -263,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             refreshListView();
                             alertGroup.cancel();
-                            createNotification.generateNotification("Contact Added", name, MainActivity.class);
+//                            createNotification.generateNotification("Contact Added", name, MainActivity.class);
                             phoneNo = "";
                             name = "";
                         } else

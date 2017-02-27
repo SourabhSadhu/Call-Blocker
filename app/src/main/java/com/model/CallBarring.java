@@ -45,7 +45,7 @@ public class CallBarring extends BroadcastReceiver {
             number = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
             if (number != null) {
                 createNotification = new CreateNotification(context);
-                list = new SharedPreff(context, "MyObject").Retreive("MyObject");
+                list = new SharedPreff(context).Retreive("MyObject");
                 String data1 = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
                 int data2 = TelephonyManager.CALL_STATE_RINGING;
                 Log.d("Call", "State " + data1 + ":Incoming " + number + "list size" + list.size());
@@ -85,7 +85,7 @@ public class CallBarring extends BroadcastReceiver {
                 context.getSystemService(Context.TELEPHONY_SERVICE);
 
         Pojo pojo = new Pojo(name, numberAction, action, 1, getCurrentDate());
-        SharedPreff putLog = new SharedPreff(context, "Log");
+        SharedPreff putLog = new SharedPreff(context);
         List<Pojo> lastData = new ArrayList<>();
         lastData = putLog.Retreive("Log");
         String lastDateTime = "";
@@ -135,7 +135,7 @@ public class CallBarring extends BroadcastReceiver {
     }
 
     public String getCurrentDate() {
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM HH:mm");
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM HH:mm:ss");
         String thisDate = currentDate.format(new Date());
         return thisDate;
     }
@@ -144,14 +144,16 @@ public class CallBarring extends BroadcastReceiver {
         if (lastDateTime.equals("")) {
             return true;
         } else {
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM HH:mm");
-            Date sysTime = null;
-            Date lastTime = null;
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM HH:mm:ss");
+            Date sysTime;
+            Date lastTime;
             try {
                 sysTime = format.parse(getCurrentDate());
                 lastTime = format.parse(lastDateTime);
-                if (sysTime.after(lastTime)) {
-                    Log.d("Date Parse", "Sys-" + sysTime + ":Last" + lastTime);
+
+                Log.e("Time Check","Last " + lastTime.getTime() + " Current " + sysTime.getTime());
+
+                if (sysTime.getTime() - lastTime.getTime() >= 5000) {
                     return true;
                 }
             } catch (ParseException e) {

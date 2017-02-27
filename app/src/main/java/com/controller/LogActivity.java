@@ -3,6 +3,7 @@ package com.controller;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -35,7 +36,7 @@ public class LogActivity extends AppCompatActivity {
         context = LogActivity.this;
         delete_log = (ImageButton) findViewById(R.id.delete_log);
         listView = (ListView) findViewById(R.id.list_view_log);
-        sharedPreff = new SharedPreff(context,"Log");
+        sharedPreff = new SharedPreff(context);
         if(null != sharedPreff.Retreive("Log")){
             pojolist = sharedPreff.Retreive("Log");
         }else
@@ -89,6 +90,7 @@ public class LogActivity extends AppCompatActivity {
         listAdapter.refreshAdapter(sharedPreff.Retreive("Log"));
         sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
                 context.getResources().getString(R.string.onResume));
+        sharedPreff.SaveSerialize(null,"nCount",Integer.toString(0));
     }
 
 
@@ -98,4 +100,9 @@ public class LogActivity extends AppCompatActivity {
         sharedPreff.SaveSerialize(null,context.getResources().getString(R.string.notification),context.getResources().getString(R.string.onPause));
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

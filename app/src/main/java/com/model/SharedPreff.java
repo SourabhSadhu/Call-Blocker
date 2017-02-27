@@ -23,22 +23,22 @@ public class SharedPreff extends ContextWrapper {
     SharedPreferences mPrefs;
     private Gson gson;
 
-    public SharedPreff(Context ctx, String name) {
+    public SharedPreff(Context ctx) {
         super(ctx);
         this.thisContext = ctx;
         gson = new Gson();
-        mPrefs = getSharedPreferences(name, thisContext.MODE_PRIVATE);
+        mPrefs = getSharedPreferences("", thisContext.MODE_PRIVATE);
     }
 
     public void SaveSerialize(List<Pojo> MyObject,String name, String value) {
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        if(null != MyObject && MyObject.size() > 0) {
+        if(null != MyObject ) {
             String json = gson.toJson(MyObject);
             Log.d("Shared Preference", "Saving Data" + json);
             prefsEditor.putString(name, json);
             PrintList(MyObject);
         }
-        if(null != value && value.length() > 0){
+        if(null != value){
             prefsEditor.putString(name, value);
             Log.e("Printlist","Data " + name + " " +value);
         }
@@ -73,7 +73,7 @@ public class SharedPreff extends ContextWrapper {
             for (int i = 0; i < obj.size(); i++) {
                 obj.get(i).setId(i);
             }
-            return position >= obj.size() ? obj.get(position) : null;
+            return position <= obj.size() ? obj.get(position) : null;
         }
     }
 
@@ -89,7 +89,7 @@ public class SharedPreff extends ContextWrapper {
         for (int iter = 1; iter <= indexSize; iter++) {
             ascendingList.add(iter, updateList.get(iter - 1));
         }
-        SaveSerialize(ascendingList,name,"");
+        SaveSerialize(ascendingList,name,null);
     }
 
     public void DeleteNumber(int position, String name) {
