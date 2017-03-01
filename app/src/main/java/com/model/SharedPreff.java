@@ -37,11 +37,8 @@ public class SharedPreff extends ContextWrapper {
             Log.d("Shared Preference", "Saving Data" + json);
             prefsEditor.putString(name, json);
             PrintList(MyObject);
-        }
-        if(null != value){
-            prefsEditor.putString(name, value);
-            Log.e("Printlist","Data " + name + " " +value);
-        }
+        }else
+            prefsEditor.putString(name,"");
         prefsEditor.commit();
     }
 
@@ -135,6 +132,16 @@ public class SharedPreff extends ContextWrapper {
         Type stringType = new TypeToken<String>() {}.getType();
         String obj = (String) gson.fromJson(json, stringType);
         return obj;
+    }
+
+    public void putString(String name, String value){
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        if(null != value){
+            prefsEditor.putString(name, value);
+            Log.e("putString - Printlist","Data " + name + " " +value);
+        }else
+            prefsEditor.putString(name,"");
+        prefsEditor.commit();
     }
 
 }

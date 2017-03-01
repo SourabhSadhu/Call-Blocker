@@ -1,5 +1,6 @@
 package com.controller;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,24 +25,24 @@ public class LogActivity extends AppCompatActivity {
     private Context context;
     private ListView listView;
     private ImageButton delete_log;
-    private CustomLogAdapter listAdapter;
+    public static CustomLogAdapter listAdapter;
     private SharedPreff sharedPreff;
     private List<Pojo> pojolist;
+    public static ArrayList<Activity> activityArrayList = new ArrayList<Activity>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log);
-
         context = LogActivity.this;
         delete_log = (ImageButton) findViewById(R.id.delete_log);
         listView = (ListView) findViewById(R.id.list_view_log);
         sharedPreff = new SharedPreff(context);
-        if(null != sharedPreff.Retreive("Log")){
+        if (null != sharedPreff.Retreive("Log")) {
             pojolist = sharedPreff.Retreive("Log");
-        }else
-        pojolist = new ArrayList<>();
-
+        } else
+            pojolist = new ArrayList<>();
+        activityArrayList.add(this);
         listAdapter = new CustomLogAdapter(context, R.layout.activity_contact_list, pojolist);
         listView.setAdapter(listAdapter);
 
@@ -49,7 +50,7 @@ public class LogActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                listAdapter.clear();
-                if(pojolist != null && pojolist.size()>0) {
+                if (pojolist != null && pojolist.size() > 0) {
                     AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
                     builder1.setMessage("Delete Log ?");
                     builder1.setCancelable(true);
@@ -74,8 +75,8 @@ public class LogActivity extends AppCompatActivity {
 
                     AlertDialog alert11 = builder1.create();
                     alert11.show();
-                }else{
-                    Toast.makeText(context,"Log is empty!",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Log is empty!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
 
@@ -90,14 +91,14 @@ public class LogActivity extends AppCompatActivity {
         listAdapter.refreshAdapter(sharedPreff.Retreive("Log"));
         sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
                 context.getResources().getString(R.string.onResume));
-        sharedPreff.SaveSerialize(null,"nCount",Integer.toString(0));
+        sharedPreff.SaveSerialize(null, "nCount", Integer.toString(0));
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
-        sharedPreff.SaveSerialize(null,context.getResources().getString(R.string.notification),context.getResources().getString(R.string.onPause));
+        sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification), context.getResources().getString(R.string.onPause));
     }
 
     @Override

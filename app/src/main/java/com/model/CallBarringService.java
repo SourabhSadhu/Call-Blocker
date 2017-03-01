@@ -23,22 +23,24 @@ public class CallBarringService extends IntentService {
     boolean run = true;
     public static  CallBarring callBarring = new CallBarring();
     public static IntentFilter intentF = new IntentFilter("CallBarring");
+    private IntentFilter filter;
 
     public CallBarringService() {
         super("CallBarringService");
+        filter = new IntentFilter();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        IntentFilter filter = new IntentFilter();
+//        IntentFilter filter = new IntentFilter();
         filter.addAction(android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         registerReceiver(callBarring, filter);
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        IntentFilter filter = new IntentFilter();
+
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
         filter.addAction(android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED);
 //        filter.addAction("your_action_strings"); //further more
@@ -55,7 +57,7 @@ public class CallBarringService extends IntentService {
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
         Log.e("Service","Start");
         return START_STICKY;
     }
@@ -63,7 +65,7 @@ public class CallBarringService extends IntentService {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
 
-        Toast.makeText(this, "Service Removed", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Service Removed", Toast.LENGTH_SHORT).show();
         Log.e("Service","Task Removed");
         Intent restartService = rootIntent; //new Intent(getApplicationContext(),this.getClass());
         restartService.setPackage(getPackageName());
@@ -72,7 +74,7 @@ public class CallBarringService extends IntentService {
         AlarmManager alarmService = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 //        alarmService.set(AlarmManager.ELAPSED_REALTIME, 1000, restartServicePI);
         alarmService.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000, 3000, restartServicePI);
-        Toast.makeText(this, "Service Removed", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Service Removed", Toast.LENGTH_SHORT).show();
         super.onTaskRemoved(rootIntent);
     }
 
@@ -80,11 +82,11 @@ public class CallBarringService extends IntentService {
     public void onDestroy() {
         super.onDestroy();
         Log.e("Service","Destroy");
-//        unregisterReceiver(callBarring);
+        unregisterReceiver(callBarring);
         CallBarring.ACTION_STOP=true;
 //        callBarring = null;
         stopSelf();
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
     }
 
 }

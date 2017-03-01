@@ -6,9 +6,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 
+import com.controller.LogActivity;
 import com.model.Log;
 import com.controller.R;
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -46,16 +50,40 @@ public class CreateNotification {
                             .setAutoCancel(true);
             mBuilder.getNotification().flags |= Notification.FLAG_AUTO_CANCEL;
 
-            Intent resultIntent = new Intent(context, className);
-            PendingIntent resultPendingIntent =
-                    PendingIntent.getActivity(
-                            context,
-                            0,
-                            resultIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            mBuilder.setSound(alarmSound);
+            mBuilder.setLights(Color.WHITE, 500, 500);
+            long[] pattern = {500,500,500,500,500,500,500,500,500};
+            mBuilder.setVibrate(pattern);
+            mBuilder.setStyle(new NotificationCompat.InboxStyle());
 
-            mBuilder.setContentIntent(resultPendingIntent);
+            if(LogActivity.activityArrayList!=null && LogActivity.activityArrayList.size()>0){
+                for(int i=0;i<LogActivity.activityArrayList.size();i++){
+                    LogActivity.activityArrayList.get(i).finish();
+                }
+               // LogActivity.listAdapter.refreshAdapter(sharedPreff.Retreive("Log"));
+                Intent resultIntent = new Intent(context, className);
+                PendingIntent resultPendingIntent =
+                        PendingIntent.getActivity(
+                                context,
+                                0,
+                                resultIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+
+                mBuilder.setContentIntent(resultPendingIntent);
+            }else{
+                Intent resultIntent = new Intent(context, className);
+                PendingIntent resultPendingIntent =
+                        PendingIntent.getActivity(
+                                context,
+                                0,
+                                resultIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+
+                mBuilder.setContentIntent(resultPendingIntent);
+            }
 
             int mNotificationId = 1;
             NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);

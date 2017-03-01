@@ -17,7 +17,6 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.SharedPreferences;
-//import android.util.Log;
 import com.model.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -46,20 +45,18 @@ import android.database.Cursor;
 public class MainActivity extends AppCompatActivity {
 
     private Intent serviceIntent;
-    //    private CallBarring callBarring;
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
     private boolean isGranted = false;
     private boolean numberCheck;
 
     private ImageButton stop_service, add_contact, add_group, view_log;
+    private TextView stop_service_text;
     private ListView listView;
 
     private CustomLogAdapter customAdapter;
     private CreateNotification createNotification;
     private SharedPreff sharedPreff;
     private Context context;
-//    private SharedPreferences mPrefs;
-
     private Pojo pojo;
     private List<Pojo> pojoArrayList;
 
@@ -67,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup radio_grp;
     private RadioButton block, silent;
     private Button btn_add;
-
+    private boolean service_stopped;
     String phoneNo = "";
     String name = "";
 
@@ -95,8 +92,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         refreshListView();
-        String count = sharedPreff.getString("nCount","");
-        Log.e("Count",count + " Int " + Integer.parseInt(count));
         sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),context.getResources().getString(R.string.onResume));
         sharedPreff.SaveSerialize(null,"nCount",Integer.toString(0));
     }
@@ -112,7 +107,17 @@ public class MainActivity extends AppCompatActivity {
             stop_service.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    stopService();
+                    if(!service_stopped){
+                        stopService();
+                        stop_service.setImageResource(R.mipmap.ic_start_blocking);
+                        stop_service_text.setText("Start Service");
+                        service_stopped = true;
+                    }else{
+                        startService();
+                        stop_service.setImageResource(R.mipmap.ic_stop_blocking);
+                        stop_service_text.setText("Stop Service");
+                        service_stopped = false;
+                    }
                 }
             });
             add_contact.setOnClickListener(new View.OnClickListener() {
@@ -176,10 +181,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         stop_service = (ImageButton) findViewById(R.id.stop_service);
+        stop_service_text = (TextView) findViewById(R.id.stop_service_text);
         add_contact = (ImageButton) findViewById(R.id.add_contact);
         add_group = (ImageButton) findViewById(R.id.add_group);
         view_log = (ImageButton) findViewById(R.id.view_log);
         listView = (ListView) findViewById(R.id.list_view);
+        service_stopped = false;
     }
 
     private void initListView() {
@@ -255,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             refreshListView();
                             alertGroup.cancel();
-//                            createNotification.generateNotification("Contact Added", name, MainActivity.class);
+                            createNotification.generateNotification("Contact Added", name, MainActivity.class);
                             phoneNo = "";
                             name = "";
                         } else
