@@ -91,7 +91,7 @@ public class LogActivity extends AppCompatActivity {
         listAdapter.refreshAdapter(sharedPreff.Retreive("Log"));
         sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),
                 context.getResources().getString(R.string.onResume));
-        sharedPreff.SaveSerialize(null, "nCount", Integer.toString(0));
+        sharedPreff.putString("nCount", Integer.toString(0));
     }
 
 

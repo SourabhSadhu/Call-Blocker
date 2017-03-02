@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         refreshListView();
         sharedPreff.SaveSerialize(null, context.getResources().getString(R.string.notification),context.getResources().getString(R.string.onResume));
-        sharedPreff.SaveSerialize(null,"nCount",Integer.toString(0));
+        sharedPreff.putString("nCount",Integer.toString(0));
     }
 
     @Override
@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             refreshListView();
                             alertGroup.cancel();
-                            createNotification.generateNotification("Contact Added", name, MainActivity.class);
+//                            createNotification.generateNotification("Contact Added", name, MainActivity.class);
                             phoneNo = "";
                             name = "";
                         } else
@@ -299,20 +299,22 @@ public class MainActivity extends AppCompatActivity {
         List<String> permissionsNeeded = new ArrayList<>();
 
         final List<String> permissionsList = new ArrayList<>();
-        if (!addPermission(permissionsList, Manifest.permission.RECEIVE_BOOT_COMPLETED))
-            permissionsNeeded.add("BOOT Completion");
-        if (!addPermission(permissionsList, Manifest.permission.ACCESS_NOTIFICATION_POLICY))
-            permissionsNeeded.add("Access notification");
-        if (!addPermission(permissionsList, Manifest.permission.MODIFY_AUDIO_SETTINGS))
-            permissionsNeeded.add("Access network state");
+//        if (!addPermission(permissionsList, Manifest.permission.RECEIVE_BOOT_COMPLETED))
+//            permissionsNeeded.add("BOOT");
+//        if (!addPermission(permissionsList, Manifest.permission.ACCESS_NOTIFICATION_POLICY))
+//            permissionsNeeded.add("notification");
+//        if (!addPermission(permissionsList, Manifest.permission.MODIFY_AUDIO_SETTINGS))
+//            permissionsNeeded.add("audio settings");
         if (!addPermission(permissionsList, Manifest.permission.READ_PHONE_STATE))
-            permissionsNeeded.add("Access phone state");
+            permissionsNeeded.add("phone state");
         if (!addPermission(permissionsList, Manifest.permission.CALL_PHONE))
-            permissionsNeeded.add("Access phone state");
+            permissionsNeeded.add("call phone");
         if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS))
-            permissionsNeeded.add("Access read contacts");
+            permissionsNeeded.add("read contacts");
         if (!addPermission(permissionsList, Manifest.permission.WRITE_CONTACTS))
-            permissionsNeeded.add("Access write contacts");
+            permissionsNeeded.add("write contacts");
+//        if (!addPermission(permissionsList, Manifest.permission.WAKE_LOCK))
+//            permissionsNeeded.add("wake lock");
 
 
         if (permissionsList.size() > 0) {
@@ -384,6 +386,7 @@ public class MainActivity extends AppCompatActivity {
                 perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WAKE_LOCK, PackageManager.PERMISSION_GRANTED);
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
                     perms.put(permissions[i], grantResults[i]);

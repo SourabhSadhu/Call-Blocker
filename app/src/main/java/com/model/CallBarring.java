@@ -89,6 +89,8 @@ public class CallBarring extends BroadcastReceiver {
         List<Pojo> lastData = new ArrayList<>();
         lastData = putLog.Retreive("Log");
         String lastDateTime = "";
+        final String handlerName = name;
+
         if (lastData != null && lastData.size() > 0) {
             lastDateTime = lastData.get(0).getDateTime();
         }
@@ -121,7 +123,13 @@ public class CallBarring extends BroadcastReceiver {
 
             if (timeCheck(lastDateTime)) {
                 putLog.UpdateList(pojo, "Log");
-                createNotification.generateNotification("Action taken for " + name, "View Details", LogActivity.class);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        createNotification.generateNotification("Action taken for " + handlerName, "View Details", LogActivity.class);
+                    }
+                }, 1000);
             }
 
 
@@ -151,7 +159,7 @@ public class CallBarring extends BroadcastReceiver {
                 sysTime = format.parse(getCurrentDate());
                 lastTime = format.parse(lastDateTime);
 
-                Log.e("Time Check","Last " + lastTime.getTime() + " Current " + sysTime.getTime());
+//                Log.e("Time Check","Last " + lastTime.getTime() + " Current " + sysTime.getTime());
 
                 if (sysTime.getTime() - lastTime.getTime() >= 5000) {
                     return true;
