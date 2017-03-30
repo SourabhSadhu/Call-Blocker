@@ -1,25 +1,22 @@
-package com.controller;
+package com.call.block.group.controller;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.model.ColorGenerator;
-import com.model.Pojo;
+import com.controller.R;
+import com.call.block.group.model.ColorGenerator;
+import com.call.block.group.model.Pojo;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by sourabh on 17/2/17.
@@ -79,7 +76,7 @@ public class CustomLogAdapter extends ArrayAdapter {
         if(null != pojo.getNumber())
         contact_number.setText(pojo.getNumber());
         if(null != pojo.getAction())
-        contact_action.setText(pojo.getAction());
+        contact_action.setText(pojo.getAction()+" for "+pojo.getBlock_action());
         if(null != pojo.getDateTime() && pojo.getDateTime().length()>10) {
             contact_log_date.setText(pojo.getDateTime().substring(0, 5));
             contact_log_time.setText(pojo.getDateTime().substring(6));

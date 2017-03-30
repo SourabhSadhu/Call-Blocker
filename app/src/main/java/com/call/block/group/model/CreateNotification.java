@@ -1,24 +1,17 @@
-package com.model;
+package com.call.block.group.model;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 
-import com.controller.LogActivity;
-import com.model.Log;
+import com.call.block.group.controller.LogActivity;
 import com.controller.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-
-import com.model.SharedPreff;
 
 import java.util.ArrayList;
 import java.util.HashSet;

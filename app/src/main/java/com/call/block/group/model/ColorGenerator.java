@@ -1,4 +1,4 @@
-package com.model;
+package com.call.block.group.model;
 
 import android.graphics.Color;
 

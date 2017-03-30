@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.call.block.group.controller.MainActivity">
             <intent-filter android:priority="100">
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +28,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.model.CallBarring"
+        <receiver android:name="com.call.block.group.model.CallBarring"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="999">
@@ -37,7 +39,7 @@
         <!-- <service android:name="com.model.RegServiceCallbarring"/> -->
 
         <service
-            android:name="com.model.CallBarringService"
+            android:name="com.call.block.group.model.CallBarringService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -45,10 +47,10 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".LogActivity" />
+        <activity android:name="com.call.block.group.controller.LogActivity" />
 
         <receiver
-            android:name="com.model.BootCompletion"
+            android:name="com.call.block.group.model.BootCompletion"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

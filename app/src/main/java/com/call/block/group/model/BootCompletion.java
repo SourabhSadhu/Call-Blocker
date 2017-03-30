@@ -1,9 +1,8 @@
-package com.model;
+package com.call.block.group.model;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 public class BootCompletion extends BroadcastReceiver {
     public BootCompletion() {

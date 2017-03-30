@@ -1,25 +1,17 @@
-package com.model;
+package com.call.block.group.model;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Handler;
-import android.telecom.Call;
 import android.telephony.TelephonyManager;
-import com.model.Log;
-import android.widget.Toast;
 
-import com.controller.CustomAdapter;
-import com.controller.CustomLogAdapter;
-import com.controller.LogActivity;
-import com.model.*;
+import com.call.block.group.controller.LogActivity;
 
 import com.android.internal.telephony.ITelephony;
 
 import java.lang.reflect.Method;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +22,9 @@ import java.util.List;
 public class CallBarring extends BroadcastReceiver {
 
     private String number;
+    String mobNumber, action, name;
+    int length;
+    String block_type;
     private static List<Pojo> list = new ArrayList<>();
     public static Boolean ACTION_STOP = false;
     private Context context;
@@ -51,19 +46,37 @@ public class CallBarring extends BroadcastReceiver {
                 Log.d("Call", "State " + data1 + ":Incoming " + number + "list size" + list.size());
                 if (ACTION_STOP == false) {
                     for (int iter = 0; iter < list.size(); iter++) {
-                        String mobNumber, action, name;
-                        int length;
+
                         mobNumber = list.get(iter).getNumber();
                         action = list.get(iter).getAction();
                         name = list.get(iter).getName();
+                        block_type = list.get(iter).getBlock_action();
                         length = mobNumber.length();
                         Log.d("Call Barring", "Mobile Number " + mobNumber + ":Action " + action + ":Number length " + length);
                         Log.d("Call Barring", "Received Number " + number);
-                        if (number.length() >= length && number.substring(0, length).equals(mobNumber)) {
-                            Log.d("Call Barring", "Taking Action");
-                            audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-                            disconnectPhoneItelephony(context, name, action, number);
-                            return;
+                        if(CallBlockNumberType.STARTS_WITH.value().equals(block_type)) {
+                            if (number.length() >= length && number.substring(0, length).equals(mobNumber)) {
+                                Log.d("Call Barring", "Taking Action for Starts with");
+                                audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                                disconnectPhoneItelephony(context, name, action, number, block_type);
+                                return;
+                            }
+                        } else if(CallBlockNumberType.CONTAINS.value().equals(block_type)){
+                            if (number.length() >= length && number.contains(mobNumber)) {
+                                Log.d("Call Barring", "Taking Action for contains");
+                                audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                                disconnectPhoneItelephony(context, name, action, number, block_type);
+                                return;
+                            }
+                        }else if(CallBlockNumberType.ENDS_WITH.value().equals(block_type)){
+                            Log.d("Ends with","stored number: "+ mobNumber + " length: " + length + "received number check:" +
+                                    number.substring(number.length()-length, number.length()));
+                            if (number.length() >= length && number.substring(number.length()-length, number.length()).equals(mobNumber)) {
+                                Log.d("Call Barring", "Taking Action for contains");
+                                audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                                disconnectPhoneItelephony(context, name, action, number, block_type);
+                                return;
+                            }
                         }
                     }
 
@@ -79,12 +92,12 @@ public class CallBarring extends BroadcastReceiver {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void disconnectPhoneItelephony(Context context, String name, String action, String numberAction) {
+    private void disconnectPhoneItelephony(Context context, String name, String action, String numberAction, String block_type) {
         ITelephony telephonyService;
         TelephonyManager telephony = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
 
-        Pojo pojo = new Pojo(name, numberAction, action, 1, getCurrentDate());
+        Pojo pojo = new Pojo(name, numberAction, action, 1, getCurrentDate(), block_type);
         SharedPreff putLog = new SharedPreff(context);
         List<Pojo> lastData = new ArrayList<>();
         lastData = putLog.Retreive("Log");
@@ -158,9 +171,6 @@ public class CallBarring extends BroadcastReceiver {
             try {
                 sysTime = format.parse(getCurrentDate());
                 lastTime = format.parse(lastDateTime);
-
-//                Log.e("Time Check","Last " + lastTime.getTime() + " Current " + sysTime.getTime());
-
                 if (sysTime.getTime() - lastTime.getTime() >= 5000) {
                     return true;
                 }

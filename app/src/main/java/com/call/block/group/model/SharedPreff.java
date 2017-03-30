@@ -1,11 +1,9 @@
-package com.model;
+package com.call.block.group.model;
 
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 //import android.util.Log;
-import com.model.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

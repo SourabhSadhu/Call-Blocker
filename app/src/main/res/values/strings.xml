@@ -17,6 +17,14 @@
         <item>Answer</item>
     </string-array>
 
+    <string-array name="block_number_type">
+        <item>Action Type</item>
+        <item>Starts with</item>
+        <item>Contains</item>
+        <item>Ends with</item>
+    </string-array>
+
+
     <item type="id" name="dynamic_image" />
 
     <string name="notification">notification</string>

@@ -1,4 +1,4 @@
-package com.model;
+package com.call.block.group.model;
 
 /**
  * Created by sourabh on 24/2/17.

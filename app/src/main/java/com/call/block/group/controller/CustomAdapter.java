@@ -1,4 +1,4 @@
-package com.controller;
+package com.call.block.group.controller;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -10,7 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.model.Pojo;
+import com.controller.R;
+import com.call.block.group.model.Pojo;
 
 import java.util.ArrayList;
 import java.util.List;

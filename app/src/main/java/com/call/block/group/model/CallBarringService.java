@@ -1,18 +1,13 @@
-package com.model;
+package com.call.block.group.model;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import com.model.Log;
-import android.view.View;
-import android.widget.Toast;
 
 /**
  * Created by SourabhSadhu on 14-12-2016.

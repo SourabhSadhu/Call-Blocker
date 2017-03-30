@@ -1,4 +1,4 @@
-package com.controller;
+package com.call.block.group.controller;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -7,17 +7,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.SharedPreferences;
-import com.model.Log;
+import android.os.Handler;
+import android.provider.CallLog.Calls;
+import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -29,18 +28,25 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.model.*;
+import com.call.block.group.CustomContentObserver;
+import com.call.block.group.model.CallBarring;
+import com.call.block.group.model.CallBarringService;
+import com.call.block.group.model.CallBlockNumberType;
+import com.call.block.group.model.CreateNotification;
+import com.call.block.group.model.Log;
+import com.call.block.group.model.Pojo;
+import com.call.block.group.model.PojoCallList;
+import com.call.block.group.model.SharedPreff;
+import com.controller.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import android.provider.ContactsContract;
-import android.database.Cursor;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,11 +65,13 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private Pojo pojo;
     private List<Pojo> pojoArrayList;
+    private int block_type_indicator = 0;
 
     private EditText et_name, et_number;
     private RadioGroup radio_grp;
     private RadioButton block, silent;
     private Button btn_add;
+    private Spinner block_type;
     private boolean service_stopped;
     String phoneNo = "";
     String name = "";
@@ -129,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
             add_group.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    addEditContactGroup(2, null, 0);
+//                    addEditContactGroup(2, null, 0);
+                    getCallLog();
                 }
             });
             view_log.setOnClickListener(new View.OnClickListener() {
@@ -222,7 +231,32 @@ public class MainActivity extends AppCompatActivity {
         block = (RadioButton) alertGroup.findViewById(R.id.block);
         silent = (RadioButton) alertGroup.findViewById(R.id.silent);
         btn_add = (Button) alertGroup.findViewById(R.id.btn_add);
+        block_type = (Spinner) alertGroup.findViewById(R.id.block_type);
 
+        block_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("Spinner", "Position: " + position);
+                switch (position) {
+                    case 0:
+                        break;
+                    case 1:
+                        pojo.setBlock_action(CallBlockNumberType.STARTS_WITH.value());
+                        break;
+                    case 2:
+                        pojo.setBlock_action(CallBlockNumberType.CONTAINS.value());
+                        break;
+                    case 3:
+                        pojo.setBlock_action(CallBlockNumberType.ENDS_WITH.value());
+                        break;
+                }
+                block_type_indicator = position;
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Toast.makeText(context,"Select an Action", Toast.LENGTH_SHORT).show();
+            }
+        });
         if (null == p) {
             et_name.setText("");
             et_number.setText("");
@@ -247,24 +281,27 @@ public class MainActivity extends AppCompatActivity {
                 if (et_name.getText() != null && et_name.getText().toString().length() > 0) {
                     if (et_number.getText() != null && et_number.getText().toString().length() >= 3) {
                         if (block.isChecked() || silent.isChecked()) {
-                            populateCountryCode();
-                            if (block.isChecked()) {
-                                pojo.setAction("Block");
-                            } else if (silent.isChecked()) {
-                                pojo.setAction("Silent");
-                            }
-                            pojo.setName(et_name.getText().toString().trim());
-                            pojo.setNumber(et_number.getText().toString());
-                            if (type == 3) {
-                                sharedPreff.EditList("MyObject", position, pojo);
-                            } else {
-                                sharedPreff.UpdateList(pojo, "MyObject");
-                            }
-                            refreshListView();
-                            alertGroup.cancel();
+                            if(block_type_indicator > 0) {
+                                populateCountryCode();
+                                if (block.isChecked()) {
+                                    pojo.setAction("Block");
+                                } else if (silent.isChecked()) {
+                                    pojo.setAction("Silent");
+                                }
+                                pojo.setName(et_name.getText().toString().trim());
+                                pojo.setNumber(et_number.getText().toString());
+                                if (type == 3) {
+                                    sharedPreff.EditList("MyObject", position, pojo);
+                                } else {
+                                    sharedPreff.UpdateList(pojo, "MyObject");
+                                }
+                                refreshListView();
+                                alertGroup.cancel();
 //                            createNotification.generateNotification("Contact Added", name, MainActivity.class);
-                            phoneNo = "";
-                            name = "";
+                                phoneNo = "";
+                                name = "";
+                            }else
+                                Toast.makeText(context, "Select an Action Type", Toast.LENGTH_SHORT).show();
                         } else
                             Toast.makeText(context, "Select an Action", Toast.LENGTH_SHORT).show();
                     } else
@@ -279,20 +316,104 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void getCallLog() {
+
+        String[] callLogFields = {Calls._ID,
+                Calls.NUMBER,
+                Calls.CACHED_NAME /* im not using the name but you can*/};
+        String viaOrder = Calls.DATE + " DESC";
+        String WHERE = Calls.NUMBER + " >0"; /*filter out private/unknown numbers */
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        final Cursor callLog_cursor = context.getContentResolver().query(Calls.CONTENT_URI, callLogFields,
+                WHERE, null, viaOrder);
+
+        AlertDialog.Builder myversionOfCallLog = new AlertDialog.Builder(
+                context);
+
+        android.content.DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int item) {
+                callLog_cursor.moveToPosition(item);
+
+                Log.v("number", callLog_cursor.getString(callLog_cursor
+                        .getColumnIndex(Calls.NUMBER)));
+
+                callLog_cursor.close();
+
+            }
+        };
+        myversionOfCallLog.setCursor(callLog_cursor, listener,
+                Calls.CACHED_NAME
+            /*+ "(" + Calls.NUMBER +")"*/
+        );
+        PojoCallList pojoCallList = new PojoCallList();
+        pojoCallList.setCONTENT_URI(Calls.CONTENT_URI.toString() );
+        pojoCallList.setCONTENT_FILTER_URI(Calls.CONTENT_FILTER_URI.toString() );
+        pojoCallList.setTYPE(Calls.TYPE );
+        pojoCallList.setNUMBER(Calls.NUMBER );
+        pojoCallList.setNUMBER_PRESENTATION(Calls.NUMBER_PRESENTATION );
+        pojoCallList.setCOUNTRY_ISO(Calls.COUNTRY_ISO );
+        pojoCallList.setDATE(Calls.DATE );
+        pojoCallList.setDURATION(Calls.DURATION );
+        pojoCallList.setDATA_USAGE(Calls.DATA_USAGE );
+        pojoCallList.setCACHED_NAME(Calls.CACHED_NAME );
+        pojoCallList.setCACHED_NUMBER_TYPE(Calls.CACHED_NUMBER_TYPE );
+        pojoCallList.setCACHED_NUMBER_LABEL(Calls.CACHED_NUMBER_LABEL );
+        pojoCallList.setTRANSCRIPTION(Calls.TRANSCRIPTION );
+        pojoCallList.setGEOCODED_LOCATION(Calls.GEOCODED_LOCATION );
+        pojoCallList.setCACHED_LOOKUP_URI(Calls.CACHED_LOOKUP_URI );
+        pojoCallList.setCACHED_MATCHED_NUMBER(Calls.CACHED_MATCHED_NUMBER );
+        pojoCallList.setCACHED_PHOTO_ID(Calls.CACHED_PHOTO_ID );
+        pojoCallList.setCACHED_PHOTO_URI(Calls.CACHED_PHOTO_URI );
+        pojoCallList.setPHONE_ACCOUNT_ID(Calls.PHONE_ACCOUNT_ID );
+        pojoCallList.setPOST_DIAL_DIGITS(Calls.POST_DIAL_DIGITS );
+
+
+
+
+        Log.d("CALL",pojoCallList.getCONTENT_URI());
+        Log.d("CALL",pojoCallList.getCONTENT_FILTER_URI());
+        Log.d("CALL",pojoCallList.getTYPE());
+        Log.d("CALL",pojoCallList.getNUMBER());
+        Log.d("CALL",pojoCallList.getNUMBER_PRESENTATION());
+        Log.d("CALL",pojoCallList.getCOUNTRY_ISO());
+        Log.d("CALL",pojoCallList.getDATE());
+        Log.d("CALL",pojoCallList.getDURATION());
+        Log.d("CALL",pojoCallList.getDATA_USAGE());
+        Log.d("CALL",pojoCallList.getCACHED_NAME());
+        Log.d("CALL",pojoCallList.getCACHED_NUMBER_TYPE());
+        Log.d("CALL",pojoCallList.getCACHED_NUMBER_LABEL());
+        Log.d("CALL",pojoCallList.getTRANSCRIPTION());
+        Log.d("CALL",pojoCallList.getGEOCODED_LOCATION());
+        Log.d("CALL",pojoCallList.getCACHED_LOOKUP_URI());
+        Log.d("CALL",pojoCallList.getCACHED_MATCHED_NUMBER());
+        Log.d("CALL",pojoCallList.getCACHED_PHOTO_ID());
+        Log.d("CALL",pojoCallList.getCACHED_PHOTO_URI());
+        Log.d("CALL",pojoCallList.getPHONE_ACCOUNT_ID());
+        Log.d("CALL",pojoCallList.getPOST_DIAL_DIGITS());
+
+        myversionOfCallLog.setTitle("Choose from Call Log");
+        myversionOfCallLog.create().show();
+    }
+
     private void populateCountryCode() {
-        phoneNo = et_number.getText().toString().trim();
-        if (phoneNo.length() >= 3 && !phoneNo.substring(0, 3).equalsIgnoreCase("+91")) {
-            phoneNo = "+91" + phoneNo;
-            Toast.makeText(context, "Default country code added", Toast.LENGTH_SHORT).show();
-        } /*else if (phoneNo.length() < 3) {
+        if(block_type_indicator == 1) {
+            phoneNo = et_number.getText().toString().trim();
+            if (phoneNo.length() >= 3 && !phoneNo.substring(0, 3).equalsIgnoreCase("+91")) {
+                phoneNo = "+91" + phoneNo;
+                Toast.makeText(context, "Default country code added", Toast.LENGTH_SHORT).show();
+            } /*else if (phoneNo.length() < 3) {
 //            phoneNo = "+91";
             Toast.makeText(context, "Enter a valid number", Toast.LENGTH_SHORT).show();
             finish();
         }*/ else {
-            Toast.makeText(context, "Verified", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Verified", Toast.LENGTH_SHORT).show();
+            }
+            et_number.setText(phoneNo);
+            numberCheck = true;
         }
-        et_number.setText(phoneNo);
-        numberCheck = true;
     }
 
     private void executeUserPermissionTree() {
@@ -309,12 +430,10 @@ public class MainActivity extends AppCompatActivity {
             permissionsNeeded.add("phone state");
         if (!addPermission(permissionsList, Manifest.permission.CALL_PHONE))
             permissionsNeeded.add("call phone");
-        if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS))
-            permissionsNeeded.add("read contacts");
-        if (!addPermission(permissionsList, Manifest.permission.WRITE_CONTACTS))
-            permissionsNeeded.add("write contacts");
-//        if (!addPermission(permissionsList, Manifest.permission.WAKE_LOCK))
-//            permissionsNeeded.add("wake lock");
+        if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS) || !addPermission(permissionsList, Manifest.permission.WRITE_CONTACTS))
+            permissionsNeeded.add("Manage contacts");
+        if (!addPermission(permissionsList, Manifest.permission.READ_CALL_LOG) || !addPermission(permissionsList, Manifest.permission.WRITE_CALL_LOG))
+            permissionsNeeded.add("Call Log");
 
 
         if (permissionsList.size() > 0) {
@@ -387,6 +506,8 @@ public class MainActivity extends AppCompatActivity {
                 perms.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.WAKE_LOCK, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_CALL_LOG,PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_CALL_LOG,PackageManager.PERMISSION_GRANTED);
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
                     perms.put(permissions[i], grantResults[i]);
@@ -432,6 +553,19 @@ public class MainActivity extends AppCompatActivity {
     public void pickContact() {
         Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
         startActivityForResult(contactPickerIntent, RESULT_PICK_CONTACT);
+    }
+
+    public void pickNumberFromLog(){
+        /*Intent showCallLog = new Intent();
+        showCallLog.setAction(Intent.ACTION_VIEW);
+        showCallLog.setType(CallLog.Calls.CONTENT_TYPE);
+        startActivityForResult(showCallLog,11);*/
+        Handler handler = new Handler();
+        Uri mediaUri = android.provider.CallLog.Calls.CONTENT_URI;
+        Log.d("PhoneService", "The Encoded path of the media Uri is "
+                + mediaUri.getEncodedPath());
+        CustomContentObserver custObser = new CustomContentObserver(handler,context);
+        context.getContentResolver().registerContentObserver(mediaUri, false, custObser);
     }
 
     @Override
