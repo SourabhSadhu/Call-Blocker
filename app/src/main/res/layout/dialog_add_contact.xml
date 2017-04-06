@@ -49,6 +49,7 @@
         android:layout_height="wrap_content"
         android:prompt="@string/spinner_prompt"
         android:entries="@array/block_number_type"
+        style="?android:attr/spinnerItemStyle"
         android:layout_gravity="center"
         android:gravity="center"
         >

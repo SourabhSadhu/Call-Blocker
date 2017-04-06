@@ -13,30 +13,29 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.call.block.group.model.CallBlockNumberType;
 import com.call.block.group.model.CommonUtils;
+import com.call.block.group.model.PojoCallLogData;
 import com.controller.R;
 import com.call.block.group.model.Pojo;
 
 import java.util.List;
 
-/**
- * Created by sourabh on 17/2/17.
- */
 
-public class CustomLogAdapter extends ArrayAdapter {
+public class CustomCallLogAdapter extends ArrayAdapter {
 
     private Context context;
-    private Pojo pojo;
-    private List<Pojo> pojolist;
+    private PojoCallLogData pojo;
+    private List<PojoCallLogData> pojolist;
 
     private RelativeLayout contact_image;
     private TextView contact_image_textview,contact_name,contact_number,contact_action,contact_log_date,contact_log_time;
     private LinearLayout contact_log_date_time;
 
-    public CustomLogAdapter(@NonNull Context context, @LayoutRes int resource, List<Pojo> pojolist) {
+    public CustomCallLogAdapter(@NonNull Context context, @LayoutRes int resource, List<PojoCallLogData> pojolist) {
         super(context, resource, pojolist);
         this.context = context;
-        this.pojo = new Pojo();
+        this.pojo = new PojoCallLogData();
         this.pojolist = pojolist;
     }
 
@@ -48,8 +47,12 @@ public class CustomLogAdapter extends ArrayAdapter {
         return 0;
     }
 
+    @Nullable
+    @Override
+    public Object getItem(int position) {
+        return pojolist.get(position);
 
-
+    }
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -72,38 +75,18 @@ public class CustomLogAdapter extends ArrayAdapter {
         pojo = pojolist.get(position);
 
         contact_image.setBackgroundColor(CommonUtils.getColor());
+
         if(null != pojo.getName()) {
             contact_image_textview.setText(nameCred(pojo.getName()));
             contact_name.setText(pojo.getName());
         }
         if(null != pojo.getNumber())
-        contact_number.setText(pojo.getNumber());
-        if(null != pojo.getAction())
-        contact_action.setText(pojo.getAction()+" for "+pojo.getBlock_action());
-        if(null != pojo.getDateTime() && pojo.getDateTime().length()>10) {
-            contact_log_date.setText(pojo.getDateTime().substring(0, 5));
-            contact_log_time.setText(pojo.getDateTime().substring(6));
-        }else{
-            try {
-                contact_log_date.setVisibility(View.GONE);
-                contact_log_time.setVisibility(View.GONE);
-                View checkImage = v.findViewById(R.id.dynamic_image);
-                if(checkImage == null) {
-                    ImageView action_img = new ImageView(context);
-                    action_img.setLayoutParams(new android.view.ViewGroup.LayoutParams(100, 100));
-                    action_img.setId(R.id.dynamic_image);
-//                    action_img.setMaxHeight(40);
-//                    action_img.setMaxWidth(40);
-                    if (pojo.getAction().equals("Silent"))
-                        action_img.setImageResource(R.mipmap.ic_menu_mute);
-                    else
-                        action_img.setImageResource(R.mipmap.ic_menu_block);
-                    // Adds the view to the layout
-                    contact_log_date_time.addView(action_img);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            contact_number.setText(pojo.getNumber());
+        if(null != pojo.getCall_date())
+            contact_action.setText(pojo.getDate_time());
+        if(null != pojo.getType() && null != pojo.getDuration()) {
+            contact_log_date.setText(pojo.getType());
+            contact_log_time.setText(pojo.getDuration());
         }
 
         return v;
@@ -119,7 +102,7 @@ public class CustomLogAdapter extends ArrayAdapter {
     }
 
 
-    public void refreshAdapter(List<Pojo> log) {
+    public void refreshAdapter(List<PojoCallLogData> log) {
         if (pojolist != null && log != null) {
             pojolist.clear();
             this.pojolist.addAll(log);

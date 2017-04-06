@@ -10,6 +10,9 @@
     <string name="add_group_text">Add Group</string>
     <string name="view_log_text">View Log</string>
     <string name="spinner_prompt">Action</string>
+    <string name="txt_call_log">Call Log</string>
+    <string name="txt_contact">Contacts</string>
+
     <string-array name="spinner_array">
         <item>Action</item>
         <item>Block</item>
