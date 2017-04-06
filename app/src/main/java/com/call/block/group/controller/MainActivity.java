@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                 silent.isChecked();
         }
 
-        if(!name.equals("") || !phoneNo.equals("")){
+        if(type == 3 && !name.equals("") || !phoneNo.equals("")){
             et_name.setText(name);
             et_number.setText(phoneNo);
         }
@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void contactPickSelection(){
         final Dialog dialogContactSelector = new Dialog(context, android.R.style.Theme_DeviceDefault_Light_Dialog);
-        dialogContactSelector.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        dialogContactSelector.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         Window window = dialogContactSelector.getWindow();
         assert window != null;
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
                             p.setName(cd.getName());
                             p.setNumber(cd.getNumber());
                             p.setAction("Block");
-                            addEditContactGroup(1,p,0);
+                            addEditContactGroup(2,p,0);
 //                        }catch(Exception e){
 //                            Log.e("Error",e.getMessage());
 //                        }
