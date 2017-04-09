@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-public class BootCompletion extends BroadcastReceiver {
+class BootCompletion extends BroadcastReceiver {
     public BootCompletion() {
     }
 

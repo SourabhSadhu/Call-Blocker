@@ -1,6 +1,7 @@
 package com.call.block.group.controller;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.provider.CallLog;
 import android.provider.CallLog.Calls;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -27,17 +29,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.call.block.group.model.AlertDialogWithImage;
 import com.call.block.group.model.CallBarring;
 import com.call.block.group.model.CallBarringService;
 import com.call.block.group.model.CallBlockNumberType;
 import com.call.block.group.model.CommonUtils;
-import com.call.block.group.model.CreateNotification;
 import com.call.block.group.model.Log;
 import com.call.block.group.model.Pojo;
 import com.call.block.group.model.PojoCallLogData;
@@ -55,17 +54,13 @@ public class MainActivity extends AppCompatActivity {
 
     private Intent serviceIntent;
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
-    private boolean isGranted = false;
-    private boolean numberCheck;
 
     private ImageButton stop_service, add_contact, add_group, view_log;
-    private ImageButton btn_call_log,btn_contact;
     private TextView stop_service_text;
-    private ListView listView,listViewContact;
+    private ListView listView;
 
     private CustomLogAdapter customAdapter;
     private CustomCallLogAdapter customCallLogAdapter;
-    private CreateNotification createNotification;
     private SharedPreff sharedPreff;
     private Context context;
     private Pojo pojo;
@@ -73,9 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private int block_type_indicator = 0;
 
     private EditText et_name, et_number;
-    private RadioGroup radio_grp;
     private RadioButton block, silent;
-    private Button btn_add;
     private Spinner block_type;
     private boolean service_stopped;
     String phoneNo = "";
@@ -99,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         initView();
         initListView();
         setListner();
-        createNotification = new CreateNotification(context);
     }
 
     @Override
@@ -187,12 +179,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
-            /*listViewContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                }
-            });*/
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -205,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
         add_group = (ImageButton) findViewById(R.id.add_group);
         view_log = (ImageButton) findViewById(R.id.view_log);
         listView = (ListView) findViewById(R.id.list_view);
-        listViewContact = (ListView) findViewById(R.id.list_view);
         service_stopped = false;
     }
 
@@ -222,10 +207,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void addEditContactGroup(final int type, final Pojo p, final int position) {
 
-        /*if (type == 1) {
-            pickContact();
-        }*/
-
         final Dialog alertGroup = new Dialog(context, android.R.style.Theme_DeviceDefault_Light_Dialog);
         alertGroup.requestWindowFeature(Window.FEATURE_NO_TITLE);
         Window window = alertGroup.getWindow();
@@ -238,10 +219,9 @@ public class MainActivity extends AppCompatActivity {
 
         et_name = (EditText) alertGroup.findViewById(R.id.et_name);
         et_number = (EditText) alertGroup.findViewById(R.id.et_number);
-        radio_grp = (RadioGroup) alertGroup.findViewById(R.id.radio_grp);
         block = (RadioButton) alertGroup.findViewById(R.id.block);
         silent = (RadioButton) alertGroup.findViewById(R.id.silent);
-        btn_add = (Button) alertGroup.findViewById(R.id.btn_add);
+        Button btn_add = (Button) alertGroup.findViewById(R.id.btn_add);
         block_type = (Spinner) alertGroup.findViewById(R.id.block_type);
 
         block_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -308,7 +288,6 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 refreshListView();
                                 alertGroup.cancel();
-//                            createNotification.generateNotification("Contact Added", name, MainActivity.class);
                                 phoneNo = "";
                                 name = "";
                             }else
@@ -329,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void contactPickSelection(){
         final Dialog dialogContactSelector = new Dialog(context, android.R.style.Theme_DeviceDefault_Light_Dialog);
-//        dialogContactSelector.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         Window window = dialogContactSelector.getWindow();
         assert window != null;
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -338,8 +316,8 @@ public class MainActivity extends AppCompatActivity {
         dialogContactSelector.setContentView(R.layout.dialog_contact_selection);
         dialogContactSelector.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        btn_contact = (ImageButton) dialogContactSelector.findViewById(R.id.btn_from_contact);
-        btn_call_log = (ImageButton) dialogContactSelector.findViewById(R.id.btn_from_log);
+        ImageButton btn_contact = (ImageButton) dialogContactSelector.findViewById(R.id.btn_from_contact);
+        ImageButton btn_call_log = (ImageButton) dialogContactSelector.findViewById(R.id.btn_from_log);
 
         btn_contact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -353,11 +331,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
             dialogContactSelector.cancel();
-
-            /**
-             * code for alert dialog
-             */
-
             List<PojoCallLogData> pojoCallLogDatas = getCallDetails(context);
             customCallLogAdapter = new CustomCallLogAdapter(context, R.layout.activity_contact_list_with_image, pojoCallLogDatas);
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
@@ -367,9 +340,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
-//                    Toast.makeText(context,"Clicked at " + which,Toast.LENGTH_SHORT).show();
                     PojoCallLogData cd = (PojoCallLogData) customCallLogAdapter.getItem(which);
                     Pojo p = new Pojo();
+                    assert cd != null;
                     p.setName(cd.getName());
                     p.setNumber(cd.getNumber());
                     p.setAction("Block");
@@ -377,23 +350,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             builderSingle.show();
-
-
-            /**
-             * code for start activity for intent
-             */
-
-    //                Intent startLogActivityIntent = new Intent(context,LogPickerActivity.class);
-    //                startActivityForResult(startLogActivityIntent,RESULT_PICK_LOG);
-
-
-            }
+    }
         });
 
         dialogContactSelector.show();
     }
 
-    private List getCallDetails(Context context) {
+    private List<PojoCallLogData> getCallDetails(Context context) {
         Log.d("GetCall","Before Called");
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(context,"Permission denied for Reading Call Log", Toast.LENGTH_SHORT).show();
@@ -404,17 +367,15 @@ public class MainActivity extends AppCompatActivity {
                 Calls.NUMBER,
                 Calls.TYPE,
                 Calls.DATE,
-                Calls.DURATION,
-                Calls.GEOCODED_LOCATION};
-        String WHERE = Calls.NUMBER + " >0";
+                Calls.DURATION};
         Cursor cursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI,
                 callLogFields, null, null, CallLog.Calls.DATE + " DESC");
+        assert cursor != null;
         int name = cursor.getColumnIndex(Calls.CACHED_NAME);
         int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
         int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
         int date = cursor.getColumnIndex(CallLog.Calls.DATE);
         int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
-        int location = cursor.getColumnIndex(Calls.GEOCODED_LOCATION);
         List<PojoCallLogData> pojoCallLogDatas = new ArrayList<>();
         while (cursor.moveToNext() && pojoCallLogDatas.size() <= 30) {
             String phName = cursor.getString(name);
@@ -429,7 +390,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             String callDuration = cursor.getString(duration);
-            String callLocation = cursor.getString(location);
             String dir = null;
             int dircode = Integer.parseInt(callType);
             switch (dircode) {
@@ -455,15 +415,8 @@ public class MainActivity extends AppCompatActivity {
             p.setDate_time(callDate);
             p.setCall_date(callDayTime);
             p.setDuration(Integer.parseInt(callDuration));
-            p.setLocation(callLocation);
             if (CommonUtils.checkDuplicate(pojoCallLogDatas,p)) pojoCallLogDatas.add(p);
-            p = null;
         }
-        /*
-        for(PojoCallLogData pData : pojoCallLogDatas) {
-            Log.d("Unique List", "Number: " + pData.getNumber() + " Name: " + pData.getName() + " Type: " + pData.getType());
-        }
-        */
         cursor.close();
         return pojoCallLogDatas;
     }
@@ -474,15 +427,10 @@ public class MainActivity extends AppCompatActivity {
             if (phoneNo.length() >= 3 && !phoneNo.substring(0, 3).equalsIgnoreCase("+91")) {
                 phoneNo = "+91" + phoneNo;
                 Toast.makeText(context, "Default country code added", Toast.LENGTH_SHORT).show();
-            } /*else if (phoneNo.length() < 3) {
-//            phoneNo = "+91";
-            Toast.makeText(context, "Enter a valid number", Toast.LENGTH_SHORT).show();
-            finish();
-        }*/ else {
+            }else {
                 Toast.makeText(context, "Verified", Toast.LENGTH_SHORT).show();
             }
             et_number.setText(phoneNo);
-            numberCheck = true;
         }
     }
 
@@ -490,12 +438,6 @@ public class MainActivity extends AppCompatActivity {
         List<String> permissionsNeeded = new ArrayList<>();
 
         final List<String> permissionsList = new ArrayList<>();
-//        if (!addPermission(permissionsList, Manifest.permission.RECEIVE_BOOT_COMPLETED))
-//            permissionsNeeded.add("BOOT");
-//        if (!addPermission(permissionsList, Manifest.permission.ACCESS_NOTIFICATION_POLICY))
-//            permissionsNeeded.add("notification");
-//        if (!addPermission(permissionsList, Manifest.permission.MODIFY_AUDIO_SETTINGS))
-//            permissionsNeeded.add("audio settings");
         if (!addPermission(permissionsList, Manifest.permission.READ_PHONE_STATE))
             permissionsNeeded.add("phone state");
         if (!addPermission(permissionsList, Manifest.permission.CALL_PHONE))
@@ -522,15 +464,12 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                return;
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
                         REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
             }
-            return;
         }
-        isGranted = true;
 
     }
 
@@ -562,12 +501,12 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
-                Map<String, Integer> perms = new HashMap<String, Integer>();
-                // Initial
+                Map<String, Integer> perms = new HashMap<>();
                 perms.put(Manifest.permission.RECEIVE_BOOT_COMPLETED, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.ACCESS_NOTIFICATION_POLICY, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.MODIFY_AUDIO_SETTINGS, PackageManager.PERMISSION_GRANTED);
@@ -578,23 +517,13 @@ public class MainActivity extends AppCompatActivity {
                 perms.put(Manifest.permission.WAKE_LOCK, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.READ_CALL_LOG,PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.WRITE_CALL_LOG,PackageManager.PERMISSION_GRANTED);
-                // Fill with results
                 for (int i = 0; i < permissions.length; i++)
                     perms.put(permissions[i], grantResults[i]);
-                // Check for ACCESS_FINE_LOCATION
-                if (/*perms.get(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        && */
-                        perms.get(Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_GRANTED
-                                && perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-                                && perms.get(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                if (perms.get(Manifest.permission.MODIFY_AUDIO_SETTINGS) != PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED
                         ) {
-                    // All Permissions Granted
-                    isGranted = true;
-                } else {
-                    // Permission Denied
                     finish();
-
                 }
             }
             break;
@@ -642,22 +571,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void contactPicked(Intent data) {
-        Cursor cursor = null;
+        Cursor cursor;
         try {
             Uri uri = data.getData();
             cursor = getContentResolver().query(uri, null, null, null, null);
+            assert cursor != null;
             cursor.moveToFirst();
             int phoneIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
             int nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
             phoneNo = cursor.getString(phoneIndex);
             name = cursor.getString(nameIndex);
-//            Uri photo = Uri.withAppendedPath(uri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
             Log.e("Contact", "Name-" + name + " Number-" + phoneNo + " Pic-" + phoneNo);
             phoneNo = phoneNo.replaceAll("-", "");
             phoneNo = phoneNo.replaceAll(" ", "");
-
             addEditContactGroup(1, null, 0);
-
+            cursor.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

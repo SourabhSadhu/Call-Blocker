@@ -20,20 +20,18 @@ import java.util.List;
 public class LogActivity extends AppCompatActivity {
 
     private Context context;
-    private ListView listView;
-    private ImageButton delete_log;
-    public static CustomLogAdapter listAdapter;
+    private CustomLogAdapter listAdapter;
     private SharedPreff sharedPreff;
     private List<Pojo> pojolist;
-    public static ArrayList<Activity> activityArrayList = new ArrayList<Activity>();
+    public static ArrayList<Activity> activityArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log);
         context = LogActivity.this;
-        delete_log = (ImageButton) findViewById(R.id.delete_log);
-        listView = (ListView) findViewById(R.id.list_view_log);
+        ImageButton delete_log = (ImageButton) findViewById(R.id.delete_log);
+        ListView listView = (ListView) findViewById(R.id.list_view_log);
         sharedPreff = new SharedPreff(context);
         if (null != sharedPreff.Retreive("Log")) {
             pojolist = sharedPreff.Retreive("Log");
@@ -46,7 +44,6 @@ public class LogActivity extends AppCompatActivity {
         delete_log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                listAdapter.clear();
                 if (pojolist != null && pojolist.size() > 0) {
                     AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
                     builder1.setMessage("Delete Log ?");

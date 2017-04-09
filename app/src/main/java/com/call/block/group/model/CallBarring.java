@@ -6,45 +6,34 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
-
 import com.call.block.group.controller.LogActivity;
-
 import com.android.internal.telephony.ITelephony;
-
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 public class CallBarring extends BroadcastReceiver {
 
-    private String number;
     String mobNumber, action, name;
     int length;
     String block_type;
-    private static List<Pojo> list = new ArrayList<>();
     public static Boolean ACTION_STOP = false;
-    private Context context;
     private AudioManager audioManager;
     private CreateNotification createNotification;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        this.context = context;
-        if (!intent.getAction().equals("android.intent.action.PHONE_STATE"))
-            return;
-        else {
-            number = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+        if (intent.getAction().equals("android.intent.action.PHONE_STATE")){
+            String number = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
             if (number != null) {
                 createNotification = new CreateNotification(context);
-                list = new SharedPreff(context).Retreive("MyObject");
+                List<Pojo> list = new SharedPreff(context).Retreive("MyObject");
                 String data1 = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-                int data2 = TelephonyManager.CALL_STATE_RINGING;
                 Log.d("Call", "State " + data1 + ":Incoming " + number + "list size" + list.size());
-                if (ACTION_STOP == false) {
+                if (!ACTION_STOP) {
                     for (int iter = 0; iter < list.size(); iter++) {
 
                         mobNumber = list.get(iter).getNumber();
@@ -87,10 +76,6 @@ public class CallBarring extends BroadcastReceiver {
         }
     }
 
-    public void UpdateRecord(Context context) {
-
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void disconnectPhoneItelephony(Context context, String name, String action, String numberAction, String block_type) {
         ITelephony telephonyService;
@@ -99,8 +84,7 @@ public class CallBarring extends BroadcastReceiver {
 
         Pojo pojo = new Pojo(name, numberAction, action, 1, getCurrentDate(), block_type);
         SharedPreff putLog = new SharedPreff(context);
-        List<Pojo> lastData = new ArrayList<>();
-        lastData = putLog.Retreive("Log");
+        List<Pojo> lastData = putLog.Retreive("Log");
         String lastDateTime = "";
         final String handlerName = name;
 
@@ -113,25 +97,29 @@ public class CallBarring extends BroadcastReceiver {
             Method m = c.getDeclaredMethod("getITelephony");
             m.setAccessible(true);
             telephonyService = (ITelephony) m.invoke(telephony);
-            if (action.equals("Block")) {
-                telephonyService.endCall();
-            } else if (action.equals("Silent")) {
-                telephonyService.silenceRinger();
-                if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
-                    audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                    if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE) {
+            switch (action) {
+                case "Block":
+                    telephonyService.endCall();
+                    break;
+                case "Silent":
+                    telephonyService.silenceRinger();
+                    if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                         audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                    }
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            backToNormal();
+                        if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE) {
+                            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                         }
-                    }, 45000);
-                }
-            } else if (action.equals("Answer")) {
-                telephonyService.answerRingingCall();
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                backToNormal();
+                            }
+                        }, 45000);
+                    }
+                    break;
+                case "Answer":
+                    telephonyService.answerRingingCall();
+                    break;
             }
 
             if (timeCheck(lastDateTime)) {
@@ -157,8 +145,7 @@ public class CallBarring extends BroadcastReceiver {
 
     public String getCurrentDate() {
         SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM HH:mm:ss");
-        String thisDate = currentDate.format(new Date());
-        return thisDate;
+        return currentDate.format(new Date());
     }
 
     public boolean timeCheck(String lastDateTime) {
