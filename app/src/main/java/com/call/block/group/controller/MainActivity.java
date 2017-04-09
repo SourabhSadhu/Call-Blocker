@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         customAdapter.refreshAdapter(sharedPreff.Retreive("MyObject"));
     }
 
-    private void addEditContactGroup(final int type, Pojo p, final int position) {
+    private void addEditContactGroup(final int type, final Pojo p, final int position) {
 
         /*if (type == 1) {
             pickContact();

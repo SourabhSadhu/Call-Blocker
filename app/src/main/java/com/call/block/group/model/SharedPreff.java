@@ -99,6 +99,7 @@ public class SharedPreff extends ContextWrapper {
         list.get(position).setName(p.getName());
         list.get(position).setNumber(p.getNumber());
         list.get(position).setAction(p.getAction());
+        list.get(position).setBlock_action(p.getBlock_action());
         PrintList(list);
         SaveSerialize(list,name,"");
 
