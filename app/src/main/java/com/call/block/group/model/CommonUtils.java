@@ -8,6 +8,8 @@ import java.util.Random;
 
 /**
  * Created by sourabh on 5/4/17.
+ * author: Sourabh
+ * contains: basic methods needed by every class
  */
 
 public class CommonUtils {
@@ -30,5 +32,14 @@ public class CommonUtils {
         int green = randomGenerator.nextInt(256);
         int blue = randomGenerator.nextInt(256);
         return Color.argb(255,red,green,blue);
+    }
+
+    public static String nameCred(String name){
+        if(name.contains(" ")){
+            String[] seperated = name.split(" ",2);
+            return seperated[0].substring(0,1).toUpperCase() + seperated[1].substring(0,1).toUpperCase();
+        }
+        else
+            return name.substring(0,1).toUpperCase();
     }
 }

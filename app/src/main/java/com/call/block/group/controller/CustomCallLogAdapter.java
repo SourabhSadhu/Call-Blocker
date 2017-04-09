@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.call.block.group.model.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,19 +20,14 @@ import com.call.block.group.R;
 import java.util.List;
 
 
-public class CustomCallLogAdapter extends ArrayAdapter {
+class CustomCallLogAdapter extends ArrayAdapter {
 
     private Context context;
     private PojoCallLogData pojo;
     private List<PojoCallLogData> pojolist;
 
-    private RelativeLayout contact_image;
-    private TextView contact_image_textview,contact_name,contact_number,contact_action;
-    private LinearLayout contact_log_date_time;
-    private ImageView action_image;
-    private TextView action_text;
 
-    public CustomCallLogAdapter(@NonNull Context context, @LayoutRes int resource, List<PojoCallLogData> pojolist) {
+    CustomCallLogAdapter(@NonNull Context context, @LayoutRes int resource, List<PojoCallLogData> pojolist) {
         super(context, resource, pojolist);
         this.context = context;
         this.pojo = new PojoCallLogData();
@@ -56,29 +50,28 @@ public class CustomCallLogAdapter extends ArrayAdapter {
     }
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-//        return super.getView(position, convertView, parent);
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View v = convertView;
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.activity_contact_list_with_image, parent, false);
         }
 
-        contact_image = (RelativeLayout) v.findViewById(R.id.contact_image);
-        contact_image_textview = (TextView) v.findViewById(R.id.contact_image_textview);
-        contact_name = (TextView) v.findViewById(R.id.contact_name);
-        contact_number = (TextView) v.findViewById(R.id.contact_number);
-        contact_action = (TextView) v.findViewById(R.id.contact_action);
-        contact_log_date_time = (LinearLayout) v.findViewById(R.id.contact_log_date_time);
-        action_image = (ImageView) v.findViewById(R.id.action_image);
-        action_text = (TextView) v.findViewById(R.id.action_text);
+        RelativeLayout contact_image = (RelativeLayout) v.findViewById(R.id.contact_image);
+        TextView contact_image_textview = (TextView) v.findViewById(R.id.contact_image_textview);
+        TextView contact_name = (TextView) v.findViewById(R.id.contact_name);
+        TextView contact_number = (TextView) v.findViewById(R.id.contact_number);
+        TextView contact_action = (TextView) v.findViewById(R.id.contact_action);
+//        LinearLayout contact_log_date_time = (LinearLayout) v.findViewById(R.id.contact_log_date_time);
+        ImageView action_image = (ImageView) v.findViewById(R.id.action_image);
+        TextView action_text = (TextView) v.findViewById(R.id.action_text);
 
         pojo = pojolist.get(position);
 
         contact_image.setBackgroundColor(CommonUtils.getColor());
 
         if(null != pojo.getName()) {
-            contact_image_textview.setText(nameCred(pojo.getName()));
+            contact_image_textview.setText(CommonUtils.nameCred(pojo.getName()));
             contact_name.setText(pojo.getName());
         }else{
             contact_image_textview.setText("!");
@@ -102,7 +95,6 @@ public class CustomCallLogAdapter extends ArrayAdapter {
         }
 
         int type = pojo.getTypeInt();
-//        Log.d("TYPE","Name " + pojo.getName() + " | Type " + pojo.getType() + " | " + type);
         if(pojo.getTypeInt() > 0 ) {
             switch(type) {
                 case 1:
@@ -122,21 +114,6 @@ public class CustomCallLogAdapter extends ArrayAdapter {
         return v;
     }
 
-    public String nameCred(String name){
-        if(name.contains(" ")){
-            String[] seperated = name.split(" ",2);
-            return seperated[0].substring(0,1).toUpperCase() + seperated[1].substring(0,1).toUpperCase();
-        }
-        else
-            return name.substring(0,1).toUpperCase();
-    }
 
 
-    public void refreshAdapter(List<PojoCallLogData> log) {
-        if (pojolist != null && log != null) {
-            pojolist.clear();
-            this.pojolist.addAll(log);
-            this.notifyDataSetInvalidated();
-        }
-    }
 }
