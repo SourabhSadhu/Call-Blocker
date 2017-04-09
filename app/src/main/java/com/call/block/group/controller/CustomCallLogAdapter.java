@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,7 +30,7 @@ public class CustomCallLogAdapter extends ArrayAdapter {
     private RelativeLayout contact_image;
     private TextView contact_image_textview,contact_name,contact_number,contact_action;
     private LinearLayout contact_log_date_time;
-    private ImageButton action_image;
+    private ImageView action_image;
     private TextView action_text;
 
     public CustomCallLogAdapter(@NonNull Context context, @LayoutRes int resource, List<PojoCallLogData> pojolist) {
@@ -70,7 +70,7 @@ public class CustomCallLogAdapter extends ArrayAdapter {
         contact_number = (TextView) v.findViewById(R.id.contact_number);
         contact_action = (TextView) v.findViewById(R.id.contact_action);
         contact_log_date_time = (LinearLayout) v.findViewById(R.id.contact_log_date_time);
-        action_image = (ImageButton) v.findViewById(R.id.action_image);
+        action_image = (ImageView) v.findViewById(R.id.action_image);
         action_text = (TextView) v.findViewById(R.id.action_text);
 
         pojo = pojolist.get(position);

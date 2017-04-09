@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -32,7 +31,7 @@ public class CustomLogAdapter extends ArrayAdapter {
 
     private RelativeLayout contact_image;
     private TextView contact_image_textview,contact_name,contact_number,contact_action;
-    private ImageButton img_type;
+    private ImageView img_type;
     private LinearLayout contact_log_date_time;
 
     public CustomLogAdapter(@NonNull Context context, @LayoutRes int resource, List<Pojo> pojolist) {
@@ -68,7 +67,7 @@ public class CustomLogAdapter extends ArrayAdapter {
         contact_number = (TextView) v.findViewById(R.id.contact_number);
         contact_action = (TextView) v.findViewById(R.id.contact_action);
         contact_log_date_time = (LinearLayout) v.findViewById(R.id.contact_log_date_time);
-        img_type = (ImageButton) v.findViewById(R.id.img_type);
+        img_type = (ImageView) v.findViewById(R.id.img_type);
 
         pojo = pojolist.get(position);
 

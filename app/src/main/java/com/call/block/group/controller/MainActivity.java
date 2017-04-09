@@ -275,9 +275,9 @@ public class MainActivity extends AppCompatActivity {
             et_name.setText(p.getName());
             et_number.setText(p.getNumber());
             if (p.getAction().equals("Block")) {
-                block.isChecked();
+                block.toggle();
             } else if (p.getAction().equals("Silent"))
-                silent.isChecked();
+                silent.toggle();
         }
 
         if(type == 3 && !name.equals("") || !phoneNo.equals("")){
@@ -352,43 +352,39 @@ public class MainActivity extends AppCompatActivity {
         btn_call_log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogContactSelector.cancel();
+            dialogContactSelector.cancel();
 
-                /**
-                 * code for alert dialog
-                 */
-/*
+            /**
+             * code for alert dialog
+             */
 
-                List<PojoCallLogData> pojoCallLogDatas = getCallDetails(context);
-                customCallLogAdapter = new CustomCallLogAdapter(context, R.layout.activity_contact_list_with_image, pojoCallLogDatas);
-//                listViewContact.setAdapter(customCallLogAdapter);
-
-                AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
-                builderSingle.setIcon(R.mipmap.ic_call_log);
-                builderSingle.setTitle("Select One Contact");
-                builderSingle.setAdapter(customCallLogAdapter, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        Toast.makeText(context,"Clicked at " + which,Toast.LENGTH_SHORT).show();
-                        PojoCallLogData cd = (PojoCallLogData) customCallLogAdapter.getItem(which);
-                        Pojo p = new Pojo();
-                        p.setName(cd.getName());
-                        p.setNumber(cd.getNumber());
-                        p.setAction("Block");
-                        addEditContactGroup(2,p,0);
-                    }
-                });
-                builderSingle.show();
-*/
+            List<PojoCallLogData> pojoCallLogDatas = getCallDetails(context);
+            customCallLogAdapter = new CustomCallLogAdapter(context, R.layout.activity_contact_list_with_image, pojoCallLogDatas);
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+            builderSingle.setIcon(R.mipmap.ic_call_log);
+            builderSingle.setTitle("Select One Contact");
+            builderSingle.setAdapter(customCallLogAdapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+//                    Toast.makeText(context,"Clicked at " + which,Toast.LENGTH_SHORT).show();
+                    PojoCallLogData cd = (PojoCallLogData) customCallLogAdapter.getItem(which);
+                    Pojo p = new Pojo();
+                    p.setName(cd.getName());
+                    p.setNumber(cd.getNumber());
+                    p.setAction("Block");
+                    addEditContactGroup(2,p,0);
+                }
+            });
+            builderSingle.show();
 
 
-                /**
-                 * code for start activity for intent
-                 */
+            /**
+             * code for start activity for intent
+             */
 
-                Intent startLogActivityIntent = new Intent(context,LogPickerActivity.class);
-                startActivityForResult(startLogActivityIntent,RESULT_PICK_LOG);
+    //                Intent startLogActivityIntent = new Intent(context,LogPickerActivity.class);
+    //                startActivityForResult(startLogActivityIntent,RESULT_PICK_LOG);
 
 
             }
@@ -636,10 +632,11 @@ public class MainActivity extends AppCompatActivity {
                 case RESULT_PICK_CONTACT:
                     contactPicked(data);
                     break;
-                case RESULT_PICK_LOG:
-                    Log.d("MAIN",data.getStringExtra("NAME"));
             }
-        } else {
+        }else if(resultCode == RESULT_PICK_LOG){
+            Log.d("MAIN",data.getStringExtra("NAME"));
+        }
+        else {
             Log.e("MainActivity", "Failed to pick contact");
         }
     }
