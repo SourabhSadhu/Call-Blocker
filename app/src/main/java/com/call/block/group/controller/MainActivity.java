@@ -12,7 +12,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.CallLog.Calls;
 import android.provider.ContactsContract;
@@ -33,7 +32,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.call.block.group.CustomContentObserver;
 //import com.call.block.group.model.AlertDialogWithImage;
 import com.call.block.group.model.CallBarring;
 import com.call.block.group.model.CallBarringService;
@@ -42,13 +40,10 @@ import com.call.block.group.model.CommonUtils;
 import com.call.block.group.model.CreateNotification;
 import com.call.block.group.model.Log;
 import com.call.block.group.model.Pojo;
-import com.call.block.group.model.PojoCallList;
 import com.call.block.group.model.PojoCallLogData;
 import com.call.block.group.model.SharedPreff;
-import com.controller.R;
+import com.call.block.group.R;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -86,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
     String phoneNo = "";
     String name = "";
 
-    private static final int RESULT_PICK_CONTACT = 100;
+    private static final int RESULT_PICK_CONTACT = 2;
+    private static final int RESULT_PICK_LOG= 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -280,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
             et_number.setText(p.getNumber());
             if (p.getAction().equals("Block")) {
                 block.isChecked();
-            } else
+            } else if (p.getAction().equals("Silent"))
                 silent.isChecked();
         }
 
@@ -357,8 +353,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialogContactSelector.cancel();
+
+                /**
+                 * code for alert dialog
+                 */
+/*
+
                 List<PojoCallLogData> pojoCallLogDatas = getCallDetails(context);
-                customCallLogAdapter = new CustomCallLogAdapter(context, R.layout.activity_contact_list, pojoCallLogDatas);
+                customCallLogAdapter = new CustomCallLogAdapter(context, R.layout.activity_contact_list_with_image, pojoCallLogDatas);
 //                listViewContact.setAdapter(customCallLogAdapter);
 
                 AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
@@ -367,21 +369,28 @@ public class MainActivity extends AppCompatActivity {
                 builderSingle.setAdapter(customCallLogAdapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(context,"Clicked at " + which,Toast.LENGTH_SHORT).show();
-//                        try {
-                            PojoCallLogData cd = (PojoCallLogData) customCallLogAdapter.getItem(which);
-                            Pojo p = new Pojo();
-                            p.setName(cd.getName());
-                            p.setNumber(cd.getNumber());
-                            p.setAction("Block");
-                            addEditContactGroup(2,p,0);
-//                        }catch(Exception e){
-//                            Log.e("Error",e.getMessage());
-//                        }
                         dialog.cancel();
+                        Toast.makeText(context,"Clicked at " + which,Toast.LENGTH_SHORT).show();
+                        PojoCallLogData cd = (PojoCallLogData) customCallLogAdapter.getItem(which);
+                        Pojo p = new Pojo();
+                        p.setName(cd.getName());
+                        p.setNumber(cd.getNumber());
+                        p.setAction("Block");
+                        addEditContactGroup(2,p,0);
                     }
                 });
                 builderSingle.show();
+*/
+
+
+                /**
+                 * code for start activity for intent
+                 */
+
+                Intent startLogActivityIntent = new Intent(context,LogPickerActivity.class);
+                startActivityForResult(startLogActivityIntent,RESULT_PICK_LOG);
+
+
             }
         });
 
@@ -403,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
                 Calls.GEOCODED_LOCATION};
         String WHERE = Calls.NUMBER + " >0";
         Cursor cursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI,
-                callLogFields, WHERE, null, CallLog.Calls.DATE + " DESC");
+                callLogFields, null, null, CallLog.Calls.DATE + " DESC");
         int name = cursor.getColumnIndex(Calls.CACHED_NAME);
         int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
         int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
@@ -411,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
         int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
         int location = cursor.getColumnIndex(Calls.GEOCODED_LOCATION);
         List<PojoCallLogData> pojoCallLogDatas = new ArrayList<>();
-        while (cursor.moveToNext()) {
+        while (cursor.moveToNext() && pojoCallLogDatas.size() <= 30) {
             String phName = cursor.getString(name);
             String phNumber = cursor.getString(number);
             String callType = cursor.getString(type);
@@ -438,92 +447,29 @@ public class MainActivity extends AppCompatActivity {
                 case CallLog.Calls.MISSED_TYPE:
                     dir = "MISS";
                     break;
+                case Calls.REJECTED_TYPE:
+                    dir = "Reject";
+                    break;
             }
             PojoCallLogData p = new PojoCallLogData();
             p.setName(phName);
             p.setNumber(phNumber.trim());
             p.setType(dir);
+            p.setTypeInt(dircode);
             p.setDate_time(callDate);
             p.setCall_date(callDayTime);
-            p.setDuration(callDuration);
+            p.setDuration(Integer.parseInt(callDuration));
             p.setLocation(callLocation);
-
             if (CommonUtils.checkDuplicate(pojoCallLogDatas,p)) pojoCallLogDatas.add(p);
-
             p = null;
         }
+        /*
         for(PojoCallLogData pData : pojoCallLogDatas) {
             Log.d("Unique List", "Number: " + pData.getNumber() + " Name: " + pData.getName() + " Type: " + pData.getType());
         }
-
+        */
         cursor.close();
         return pojoCallLogDatas;
-    }
-
-    public void getCallLog() {
-
-        String[] callLogFields = {Calls._ID,
-                Calls.CACHED_NAME,
-                Calls.NUMBER,
-                Calls.TYPE,
-                Calls.DATE,
-                Calls.DURATION,
-                Calls.GEOCODED_LOCATION};
-        String viaOrder = Calls.DATE + " DESC";
-        String WHERE = Calls.NUMBER + " >0";
-
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        final Cursor callLog_cursor = context.getContentResolver().query(Calls.CONTENT_URI, callLogFields,
-                WHERE, null, viaOrder);
-        List<PojoCallLogData> pojoCallLogDatas = new ArrayList<>();
-//        for(int i = 0; i < callLog_cursor.getCount(); i++){
-        while (callLog_cursor.moveToNext()) {
-//            callLog_cursor.moveToPosition(i);
-
-            PojoCallLogData p = new PojoCallLogData();
-            p.setName(callLog_cursor.getString(callLog_cursor
-                    .getColumnIndex(Calls.CACHED_NAME)));
-            p.setNumber(callLog_cursor.getString(callLog_cursor
-                    .getColumnIndex(Calls.NUMBER)).trim());
-            p.setType(callLog_cursor.getString(callLog_cursor
-                    .getColumnIndex(Calls.TYPE)));
-            p.setDate_time(callLog_cursor.getString(callLog_cursor
-                    .getColumnIndex(Calls.DATE)));
-            p.setDuration(callLog_cursor.getString(callLog_cursor
-                    .getColumnIndex(Calls.DURATION)));
-            p.setLocation(callLog_cursor.getString(callLog_cursor
-                    .getColumnIndex(Calls.GEOCODED_LOCATION)));
-
-            if (CommonUtils.checkDuplicate(pojoCallLogDatas,p)) pojoCallLogDatas.add(p);
-
-            p = null;
-        }
-        for(PojoCallLogData pData : pojoCallLogDatas) {
-            Log.d("Unique List", "Number: " + pData.getNumber() + "Name: " + pData.getName() + "Type:");
-        }
-//        AlertDialog.Builder myversionOfCallLog = new AlertDialog.Builder(
-//                context);
-//
-//        android.content.DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialogInterface, int item) {
-//                callLog_cursor.moveToPosition(item);
-//
-//                Log.v("number", callLog_cursor.getString(callLog_cursor
-//                        .getColumnIndex(Calls.NUMBER)));
-//
-//                callLog_cursor.close();
-//
-//            }
-//        };
-//        myversionOfCallLog.setCursor(callLog_cursor, listener,
-//                Calls.CACHED_NAME
-            /*+ "(" + Calls.NUMBER +")"*/
-//        );
-
-//        myversionOfCallLog.setTitle("Choose from Call Log");
-//        myversionOfCallLog.create().show();
     }
 
     private void populateCountryCode() {
@@ -683,19 +629,6 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(contactPickerIntent, RESULT_PICK_CONTACT);
     }
 
-    public void pickNumberFromLog(){
-        /*Intent showCallLog = new Intent();
-        showCallLog.setAction(Intent.ACTION_VIEW);
-        showCallLog.setType(CallLog.Calls.CONTENT_TYPE);
-        startActivityForResult(showCallLog,11);*/
-        Handler handler = new Handler();
-        Uri mediaUri = android.provider.CallLog.Calls.CONTENT_URI;
-        Log.d("PhoneService", "The Encoded path of the media Uri is "
-                + mediaUri.getEncodedPath());
-        CustomContentObserver custObser = new CustomContentObserver(handler,context);
-        context.getContentResolver().registerContentObserver(mediaUri, false, custObser);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -703,6 +636,8 @@ public class MainActivity extends AppCompatActivity {
                 case RESULT_PICK_CONTACT:
                     contactPicked(data);
                     break;
+                case RESULT_PICK_LOG:
+                    Log.d("MAIN",data.getStringExtra("NAME"));
             }
         } else {
             Log.e("MainActivity", "Failed to pick contact");

@@ -157,8 +157,7 @@
         android:layout_above="@+id/footer1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp"
-        tools:listitem="@layout/spinner_list_items">
+        android:padding="5dp">
     </ListView>
 
 

@@ -5,7 +5,15 @@ package com.call.block.group.model;
  */
 
 public class Log {
-    static final boolean LOG = true;
+    static boolean LOG = true;
+
+    public Log(){
+
+    }
+
+    public Log(Boolean check){
+        LOG = check;
+    }
 
     public static void i(String tag, String string) {
         if (LOG) android.util.Log.i(tag, string);

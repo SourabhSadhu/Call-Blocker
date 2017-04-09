@@ -9,7 +9,7 @@ import android.support.v4.app.NotificationCompat;
 
 
 import com.call.block.group.controller.LogActivity;
-import com.controller.R;
+import com.call.block.group.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 

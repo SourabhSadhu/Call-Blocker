@@ -14,37 +14,8 @@ public class PojoCallLogData {
     private String location;
     private String date_time;
     private Date call_date;
-    private String duration;
-
-    /*@Override
-    public String toString() {
-        return "Person{" +
-                "hashcode='" + this.hashCode() + '\'' +
-                "name='" + name + '\'' +
-                ", age=" + number +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        //if (this == o) return true;
-        if (!(o instanceof PojoCallLogData)) return false;
-
-        PojoCallLogData pojoCallLogData = (PojoCallLogData) o;
-
-//        if (age != person.age) return false;
-        if (!number.equals(pojoCallLogData.number)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name.hashCode();
-        result = 3 * result;
-        return result;
-    }
-*/
+    private int duration;
+    private int typeInt;
 
     public String getName() {
         return name;
@@ -86,15 +57,23 @@ public class PojoCallLogData {
         this.date_time = date_time;
     }
 
-    public String getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
     public Date getCall_date() { return this.call_date;}
 
     public void setCall_date(Date call_date) { this.call_date = call_date;}
+
+    public int getTypeInt() {
+        return typeInt;
+    }
+
+    public void setTypeInt(int typeInt) {
+        this.typeInt = typeInt;
+    }
 }

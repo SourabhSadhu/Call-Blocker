@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.controller">
+    package="com.call.block.group">
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.call.block.group.controller.MainActivity">
+        <activity android:name=".controller.MainActivity">
             <intent-filter android:priority="100">
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +28,8 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.call.block.group.model.CallBarring"
+        <receiver
+            android:name=".model.CallBarring"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="999">
@@ -39,7 +40,7 @@
         <!-- <service android:name="com.model.RegServiceCallbarring"/> -->
 
         <service
-            android:name="com.call.block.group.model.CallBarringService"
+            android:name=".model.CallBarringService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -47,10 +48,10 @@
             </intent-filter>
         </service>
 
-        <activity android:name="com.call.block.group.controller.LogActivity" />
+        <activity android:name=".controller.LogActivity" />
 
         <receiver
-            android:name="com.call.block.group.model.BootCompletion"
+            android:name=".model.BootCompletion"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -58,7 +59,7 @@
             </intent-filter>
         </receiver>
 
-
+        <activity android:name=".controller.LogPickerActivity"></activity>
     </application>
 
 </manifest>

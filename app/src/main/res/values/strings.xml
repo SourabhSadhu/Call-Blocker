@@ -21,14 +21,14 @@
     </string-array>
 
     <string-array name="block_number_type">
-        <item>Action Type</item>
+        <item>Select type for Action</item>
         <item>Starts with</item>
         <item>Contains</item>
         <item>Ends with</item>
     </string-array>
 
 
-    <item type="id" name="dynamic_image" />
+    <item name="dynamic_image" type="id" />
 
     <string name="notification">notification</string>
     <string name="onPause">pause</string>

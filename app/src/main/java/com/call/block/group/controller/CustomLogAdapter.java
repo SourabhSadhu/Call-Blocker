@@ -8,13 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.call.block.group.model.CommonUtils;
-import com.controller.R;
+import com.call.block.group.R;
 import com.call.block.group.model.Pojo;
 
 import java.util.List;
@@ -30,7 +31,8 @@ public class CustomLogAdapter extends ArrayAdapter {
     private List<Pojo> pojolist;
 
     private RelativeLayout contact_image;
-    private TextView contact_image_textview,contact_name,contact_number,contact_action,contact_log_date,contact_log_time;
+    private TextView contact_image_textview,contact_name,contact_number,contact_action;
+    private ImageButton img_type;
     private LinearLayout contact_log_date_time;
 
     public CustomLogAdapter(@NonNull Context context, @LayoutRes int resource, List<Pojo> pojolist) {
@@ -66,8 +68,7 @@ public class CustomLogAdapter extends ArrayAdapter {
         contact_number = (TextView) v.findViewById(R.id.contact_number);
         contact_action = (TextView) v.findViewById(R.id.contact_action);
         contact_log_date_time = (LinearLayout) v.findViewById(R.id.contact_log_date_time);
-        contact_log_date = (TextView) v.findViewById(R.id.contact_log_date);
-        contact_log_time = (TextView) v.findViewById(R.id.contact_log_time);
+        img_type = (ImageButton) v.findViewById(R.id.img_type);
 
         pojo = pojolist.get(position);
 
@@ -78,33 +79,20 @@ public class CustomLogAdapter extends ArrayAdapter {
         }
         if(null != pojo.getNumber())
         contact_number.setText(pojo.getNumber());
-        if(null != pojo.getAction())
-        contact_action.setText(pojo.getAction()+" for "+pojo.getBlock_action());
-        if(null != pojo.getDateTime() && pojo.getDateTime().length()>10) {
-            contact_log_date.setText(pojo.getDateTime().substring(0, 5));
-            contact_log_time.setText(pojo.getDateTime().substring(6));
-        }else{
-            try {
-                contact_log_date.setVisibility(View.GONE);
-                contact_log_time.setVisibility(View.GONE);
-                View checkImage = v.findViewById(R.id.dynamic_image);
-                if(checkImage == null) {
-                    ImageView action_img = new ImageView(context);
-                    action_img.setLayoutParams(new android.view.ViewGroup.LayoutParams(100, 100));
-                    action_img.setId(R.id.dynamic_image);
-//                    action_img.setMaxHeight(40);
-//                    action_img.setMaxWidth(40);
-                    if (pojo.getAction().equals("Silent"))
-                        action_img.setImageResource(R.mipmap.ic_menu_mute);
-                    else
-                        action_img.setImageResource(R.mipmap.ic_menu_block);
-                    // Adds the view to the layout
-                    contact_log_date_time.addView(action_img);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
+
+        String desc = "";
+        if(null != pojo.getAction()){
+            desc = pojo.getAction()+" for "+pojo.getBlock_action();
+            if(null != pojo.getDateTime() && pojo.getDateTime().length()>10) {
+                desc = pojo.getAction() + " at " + pojo.getDateTime();
             }
+            contact_action.setText(desc);
         }
+
+        if (pojo.getAction().equals("Silent"))
+            img_type.setImageResource(R.mipmap.ic_menu_mute);
+        else if (pojo.getAction().equals("Block"))
+            img_type.setImageResource(R.mipmap.ic_menu_block);
 
         return v;
     }
