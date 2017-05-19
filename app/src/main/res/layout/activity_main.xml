@@ -8,7 +8,7 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:padding="5dp"
-    tools:context="com.call.block.group.controller.MainActivity">
+    tools:context="com.call.block.group.callblocker.call.block.group.controller.MainActivity">
 
     <LinearLayout
 

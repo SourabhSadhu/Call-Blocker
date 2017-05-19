@@ -1,4 +1,4 @@
-package com.controller;
+package callblocker.controller;
 
 import org.junit.Test;
 

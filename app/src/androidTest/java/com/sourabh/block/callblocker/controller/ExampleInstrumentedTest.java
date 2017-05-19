@@ -1,4 +1,4 @@
-package com.controller;
+package com.sourabh.block.callblocker.controller;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

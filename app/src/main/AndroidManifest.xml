@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.call.block.group">
+    package="com.sourabh.block.callblocker">
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".controller.MainActivity">
+        <activity android:name="com.sourabh.block.callblocker.controller.MainActivity">
             <intent-filter android:priority="100">
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +29,7 @@
         </activity>
 
         <receiver
-            android:name=".model.CallBarring"
+            android:name="com.sourabh.block.callblocker.model.CallBarring"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="999">
@@ -40,7 +40,7 @@
         <!-- <service android:name="com.model.RegServiceCallbarring"/> -->
 
         <service
-            android:name=".model.CallBarringService"
+            android:name="com.sourabh.block.callblocker.model.CallBarringService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -48,10 +48,10 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".controller.LogActivity" />
+        <activity android:name="com.sourabh.block.callblocker.controller.LogActivity" />
 
         <receiver
-            android:name=".model.BootCompletion"
+            android:name="com.sourabh.block.callblocker.model.BootCompletion"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -59,7 +59,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".controller.LogPickerActivity"></activity>
+        <activity android:name="com.sourabh.block.callblocker.controller.LogPickerActivity"></activity>
     </application>
 
 </manifest>
