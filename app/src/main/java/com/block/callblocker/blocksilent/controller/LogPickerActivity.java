@@ -1,4 +1,4 @@
-package com.call.block.group.controller;
+package com.block.callblocker.blocksilent.controller;
 
 import android.Manifest;
 import android.content.Context;
@@ -14,11 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.call.block.group.R;
-import com.call.block.group.model.CommonUtils;
-import com.call.block.group.model.Log;
-import com.call.block.group.model.PojoCallLogData;
-
+import com.block.callblocker.blocksilent.model.*;
+import com.block.callblocker.blocksilent.R;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +31,7 @@ public class LogPickerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log_picker);
         Context context = this;
         ListView log_picker_list_view = (ListView) findViewById(R.id.log_picker_list_view);
-        customCallLogAdapter = new CustomCallLogAdapter(context,R.layout.activity_contact_list_with_image, getCallDetails(context));
+        customCallLogAdapter = new CustomCallLogAdapter(context, R.layout.activity_contact_list_with_image, getCallDetails(context));
 
         log_picker_list_view.setAdapter(customCallLogAdapter);
 

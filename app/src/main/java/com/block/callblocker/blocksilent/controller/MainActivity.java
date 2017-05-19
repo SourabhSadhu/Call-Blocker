@@ -1,4 +1,4 @@
-package com.call.block.group.controller;
+package com.block.callblocker.blocksilent.controller;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -33,15 +33,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.call.block.group.model.CallBarring;
-import com.call.block.group.model.CallBarringService;
-import com.call.block.group.model.CallBlockNumberType;
-import com.call.block.group.model.CommonUtils;
-import com.call.block.group.model.Log;
-import com.call.block.group.model.Pojo;
-import com.call.block.group.model.PojoCallLogData;
-import com.call.block.group.model.SharedPreff;
-import com.call.block.group.R;
+import com.block.callblocker.blocksilent.model.*;
+import com.block.callblocker.blocksilent.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -435,13 +428,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void executeUserPermissionTree() {
+        Log.i("Permission","Application ");
         List<String> permissionsNeeded = new ArrayList<>();
 
         final List<String> permissionsList = new ArrayList<>();
         if (!addPermission(permissionsList, Manifest.permission.READ_PHONE_STATE))
-            permissionsNeeded.add("phone state");
+            permissionsNeeded.add("Phone State");
         if (!addPermission(permissionsList, Manifest.permission.CALL_PHONE))
-            permissionsNeeded.add("call phone");
+            permissionsNeeded.add("Call Phone");
         if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS) || !addPermission(permissionsList, Manifest.permission.WRITE_CONTACTS))
             permissionsNeeded.add("Manage contacts");
         if (!addPermission(permissionsList, Manifest.permission.READ_CALL_LOG) || !addPermission(permissionsList, Manifest.permission.WRITE_CALL_LOG))
@@ -504,6 +498,7 @@ public class MainActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.i("Permission","System ");
         switch (requestCode) {
             case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
                 Map<String, Integer> perms = new HashMap<>();

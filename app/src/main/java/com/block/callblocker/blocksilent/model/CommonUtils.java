@@ -1,8 +1,7 @@
-package com.call.block.group.model;
+package com.block.callblocker.blocksilent.model;
 
 import android.graphics.Color;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 

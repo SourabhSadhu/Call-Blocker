@@ -1,19 +1,12 @@
-package com.call.block.group.model;
+package com.block.callblocker.blocksilent.model;
 
 /**
  * Created by sourabh on 24/2/17.
+ * This class controls the log output to be displayed or invisible.
  */
 
 public class Log {
-    static boolean LOG = true;
-
-    public Log(){
-
-    }
-
-    public Log(Boolean check){
-        LOG = check;
-    }
+    static boolean LOG = false;
 
     public static void i(String tag, String string) {
         if (LOG) android.util.Log.i(tag, string);

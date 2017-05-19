@@ -1,4 +1,4 @@
-package com.call.block.group.controller;
+package com.block.callblocker.blocksilent.controller;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -9,14 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.call.block.group.model.CommonUtils;
-import com.call.block.group.model.PojoCallLogData;
-import com.call.block.group.R;
-
+import com.block.callblocker.blocksilent.R;
+import com.block.callblocker.blocksilent.model.*;
 import java.util.List;
 
 

@@ -1,4 +1,4 @@
-package com.call.block.group.controller;
+package com.block.callblocker.blocksilent.controller;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,10 +10,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.call.block.group.R;
-import com.call.block.group.model.Pojo;
-import com.call.block.group.model.SharedPreff;
 
+import com.block.callblocker.blocksilent.model.*;
+import com.block.callblocker.blocksilent.R;
 import java.util.ArrayList;
 import java.util.List;
 
